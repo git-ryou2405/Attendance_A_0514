@@ -16,7 +16,7 @@
     <div class="container">
       
       <% flash.each do |message_type, msg| %>
-        <div class="alert alert-<%= message_type %>"><%= msg %></div>
+        <div class="alert alert-<%= message_type %>"><%= msg.html_safe %></div>
       <% end %>
       
       <%= yield %>
