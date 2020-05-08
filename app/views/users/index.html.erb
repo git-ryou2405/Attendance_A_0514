@@ -1,5 +1,14 @@
 <% provide(:title, 'All Users') %>
-<h1>ユーザー一覧</h1>
+<h1><%= @search_value ? "\" #{@sea} \" の検索結果" : "全てのユーザー" %></h1>
+
+<div class="pull-right">
+  <%= form_with(model: User.new, url: users_path, method: :get, local: true) do |f| %>
+    <%= f.label :name, 'ユーザー名検索' %><br>
+    <%= f.text_field :name, value: (@sea if @search_value) %>
+    <%= f.submit '検索', class:"btn btn-sm btn-primary" %>
+    <%= link_to "Reset", users_path, class:"btn btn-sm btn-warning" %>
+  <% end %>
+</div>
 
 <div class="col-md-10 col-md-offset-1">
   <%= will_paginate %>

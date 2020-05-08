@@ -1,4 +1,6 @@
 class SessionsController < ApplicationController
+  before_action :logged_in_not_access, only: :new
+  
   def new
   end
   
@@ -11,8 +13,10 @@ class SessionsController < ApplicationController
       # ログイン情報記憶するor記憶しない
       params[:session][:remember_me] == '1' ? remember(user) : forget(user)
       
+      redirect_to current_user
+      
       # ユーザー情報ページにリダイレクト
-      redirect_back_or user
+      # redirect_back_or user
     else
       flash.now[:danger] = "認証に失敗しました。"
       render :new

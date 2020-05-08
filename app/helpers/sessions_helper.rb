@@ -61,4 +61,8 @@ module SessionsHelper
     session[:forwarding_url] = request.original_url if request.get?
   end
   
+  def logged_in_not_access
+    redirect_to(root_url) unless current_user.nil?
+  end
+  
 end

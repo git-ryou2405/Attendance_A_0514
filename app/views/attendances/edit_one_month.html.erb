@@ -7,8 +7,8 @@
         <tr>
           <th>日付</th>
           <th>曜日</th>
-          <th>出勤時間</th>
-          <th>退勤時間</th>
+          <th>出社</th>
+          <th>退社</th>
           <th>在社時間</th>
           <th>備考</th>
         </tr>
@@ -18,10 +18,18 @@
           <%= f.fields_for "attendances[]", day do |attendance| %>
             <tr>
               <td><%= l(day.worked_on, format: :short) %></td>
-              <td><%= $days_of_the_week[day.worked_on.wday] %></td>
+              <td>
+                <!-- 曜日 -->
+                <% @wday = $days_of_the_week[day.worked_on.wday] %>
+                <% if @wday == '土' %><font color="blue"><%= @wday %></font>
+                <% elsif @wday == '日' %><font color="red"><%= @wday %></font>
+                <% elsif %>
+                  <%= @wday %>
+                <% end %>
+              </td>
               
-              <!-- 出勤時間、退勤時間 -->
-              <% if !current_user.admin? && (Date.current < day.worked_on) %>
+              <!-- 出社、退社 -->
+              <% if Date.current < day.worked_on %>
                 <td><%= attendance.time_field :started_at, readonly: true, class: "form-control" %></td>
                 <td><%= attendance.time_field :finished_at, readonly: true, class: "form-control" %></td>
               <% else %>
@@ -32,7 +40,7 @@
               <!-- 在社時間 -->
               <td>
                 <% if day.started_at.present? && day.finished_at.present? %>
-                  <%= working_times(day.started_at, day.finished_at) %>
+                  <%= working_times(day.started_at.floor_to(15.minutes), day.finished_at.floor_to(15.minutes)) %>
                 <% end %>
               </td>
               
@@ -46,7 +54,7 @@
   </div>
 
   <div class="center">
-    <%= f.submit "まとめて更新", class: "btn btn-lg btn-primary" %>
-    <%= link_to "キャンセル", user_path(date: @first_day), class: "btn btn-lg btn-default" %>
+    <%= link_to "キャンセル", user_path(date: @first_day), class: "btn btn-md btn-default" %>
+    <%= f.submit "編集を保存する", class: "btn btn-md btn-primary" %>
   </div>
 <% end %>
