@@ -8,3 +8,5 @@
 * Ruby
 * Rails
 * Git(HTTPSからSSH通信へ変更)
+* 勤怠Aにて新規リモート設定＆HTTPSからSSH通信へ変更
+* 
