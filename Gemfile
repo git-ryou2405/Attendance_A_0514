@@ -4,6 +4,7 @@ gem 'rails',        '~> 5.1.6'
 gem 'rails-i18n'                # 日本語化
 gem 'bcrypt'                    # 暗号化 "Use ActiveModel has_secure_password"
 gem 'faker'                     # ダミーデータ自動生成用
+gem 'roo'                       # csvファイル読込用（Excel, CSV, OpenOffice, GoogleSpreadSheetを開くことが可能）
 
 gem 'will_paginate'             # ページネション
 gem 'bootstrap-will_paginate'   # ページネション

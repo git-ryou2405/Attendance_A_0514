@@ -1,6 +1,11 @@
 <% provide(:title, 'All Users') %>
 <h1><%= @search_value ? "\" #{@sea} \" の検索結果" : "全てのユーザー" %></h1>
 
+<%= form_tag import_users_path, multipart: true do %>
+  <%= file_field_tag :file %>
+  <%= submit_tag "CSVをインポート" %>
+<% end %>
+
 <div class="pull-right">
   <%= form_with(model: User.new, url: users_path, method: :get, local: true) do |f| %>
     <%= f.label :name, 'ユーザー名検索' %><br>
@@ -18,7 +23,7 @@
         <!-- 名前 -->
         <th><%= User.human_attribute_name :name %></th>
         <!-- 所属 -->
-        <th class="center"><%= User.human_attribute_name :department %></th>
+        <th class="center"><%= User.human_attribute_name :affiliation %></th>
         
         <!-- 基本時間、勤務時間 -->
         <% if current_user.admin? %>
@@ -40,7 +45,7 @@
           <% end %>
         </td>
         <!-- 所属 -->
-        <td class="center"><%= user.department.present? ? user.department : "無所属" %></td>
+        <td class="center"><%= user.affiliation.present? ? user.affiliation : "無所属" %></td>
         
         <!-- 基本時間、勤務時間 -->
         <% if current_user.admin? %>

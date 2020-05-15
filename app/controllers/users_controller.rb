@@ -62,15 +62,21 @@ class UsersController < ApplicationController
     end
     redirect_to users_url
   end
+  
+  def import
+    # fileはtmp(temporary)に自動で一時保存される
+    User.import(params[:file])
+    redirect_to root_url
+  end
 
   private
 
     def user_params
-      params.require(:user).permit(:name, :email, :department, :password, :password_confirmation)
+      params.require(:user).permit(:name, :email, :affiliation, :password, :password_confirmation)
     end
     
     def basic_info_params
-      params.require(:user).permit(:department, :basic_time, :work_time)
+      params.require(:user).permit(:affiliation, :basic_time, :work_time)
     end
     
     def query
