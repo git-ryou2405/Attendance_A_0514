@@ -27,7 +27,7 @@
         
         <!-- 基本時間、勤務時間 -->
         <% if current_user.admin? %>
-          <th class="center"><%= User.human_attribute_name :basic_time %></th>
+          <th class="center"><%= User.human_attribute_name :basic_work_time %></th>
           <th class="center"><%= User.human_attribute_name :work_time %></th>
         <% end %>
         <th></th>
@@ -50,7 +50,7 @@
         <!-- 基本時間、勤務時間 -->
         <% if current_user.admin? %>
           <td class="center"><%= format_basic_info(user.work_time) %></td>
-          <td class="center"><%= format_basic_info(user.basic_time) %></td>
+          <td class="center"><%= format_basic_info(user.basic_work_time) %></td>
         <% end %>
         
         <!-- モーダル -->
