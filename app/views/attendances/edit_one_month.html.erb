@@ -17,7 +17,10 @@
         <% @attendances.each do |day| %>
           <%= f.fields_for "attendances[]", day do |attendance| %>
             <tr>
-              <td><%= l(day.worked_on, format: :short) %></td>
+              <td>
+                <!--日付 -->
+                <%= l(day.worked_on, format: :short) %>
+              </td>
               <td>
                 <!-- 曜日 -->
                 <% @wday = $days_of_the_week[day.worked_on.wday] %>

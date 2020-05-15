@@ -66,7 +66,7 @@ class UsersController < ApplicationController
   def import
     # fileはtmp(temporary)に自動で一時保存される
     User.import(params[:file])
-    redirect_to root_url
+    redirect_to users_url
   end
 
   private
@@ -76,7 +76,7 @@ class UsersController < ApplicationController
     end
     
     def basic_info_params
-      params.require(:user).permit(:affiliation, :basic_work_time, :work_time)
+      params.require(:user).permit(:affiliation, :basic_work_time)
     end
     
     def query

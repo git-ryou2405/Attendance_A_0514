@@ -8,6 +8,8 @@ User.create!(name: "Sample User",
              password_confirmation: @password,
              admin: true)
 
+puts "Sample User Sucess."
+
 120.times do |n|
   name  = Faker::Name.name
   email = "sample-#{n+1}@email.com"
