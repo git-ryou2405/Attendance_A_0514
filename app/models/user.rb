@@ -53,15 +53,19 @@ class User < ApplicationRecord
   
   # importメソッド
   def self.import(file)
+    @regist_result = false
     CSV.foreach(file.path, headers: true) do |row|
-      
-      # IDが見つかれば、レコードを呼び出し、見つかれなければ、新しく作成
-      user = find_by_id(row["id"]) || new
+      # user = find_by_id(row["id"]) || new
+      user = new
       
       # CSVからデータを取得し、設定する
       user.attributes = row.to_hash.slice(*updatable_attributes)
-      user.save
+      if user.save
+        @regist_result = true
+      end
     end
+    return true if @regist_result
+    return false unless @regist_result
   end
   
   # 更新を許可するカラムを定義

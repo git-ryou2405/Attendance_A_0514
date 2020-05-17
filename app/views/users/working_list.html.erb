@@ -1,0 +1,29 @@
+<h1>出勤中社員一覧</h1>
+
+<table class="table table-bordered table-striped">
+    <thead>
+      <tr>
+        <td><div class="text-center"><%= User.human_attribute_name :employee_number %></dib></td>
+        <td><div class="text-center"><%= User.human_attribute_name :name %></dib></td>
+      </tr>
+    </thead>
+    
+    <tbody>
+      <!--ユーザーを順に確認する-->
+      <% @users.each do |user|%>
+        <!--出勤状況を順に確認する-->
+        <% user.attendances.each do |attendance| %>
+          <!--本日の日付情報のみ確認する-->
+          <% if attendance.worked_on == Date.today %>
+            <!--出社しており、退社してなければ表示する-->
+            <% if attendance.started_at.present? && attendance.finished_at.nil? %>
+              <tr>
+                <td><div class="text-center"><%= user.employee_number %></dib></td>
+                <td><div class="text-center"><%= user.name %></dib></td>
+              </tr>
+            <% end %>
+          <% end %>
+        <% end %>
+      <% end %>
+    </tbody>
+</table>

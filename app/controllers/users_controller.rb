@@ -1,14 +1,14 @@
 class UsersController < ApplicationController
-  before_action :set_user, only: [:show, :edit, :update, :destroy, :edit_basic_info, :update_basic_info, :edit_basic_info_admin]
-  before_action :logged_in_user, only: [:index, :edit, :update, :destroy, :edit_basic_info, :update_basic_info, :edit_basic_info_admin]
+  before_action :set_user, only: [:show, :edit, :update, :destroy, :edit_basic_info, :update_basic_info, :edit_basic_info_admin, :working_list]
+  before_action :logged_in_user, only: [:index, :edit, :update, :destroy, :edit_basic_info, :update_basic_info, :edit_basic_info_admin, :working_list]
   before_action :correct_user, only: [:edit, :update]
-  before_action :admin_user, only: [:index, :destroy, :edit_basic_info, :update_basic_info, :edit_basic_info_admin]
+  before_action :admin_user, only: [:index, :destroy, :edit_basic_info, :update_basic_info, :edit_basic_info_admin, :working_list]
   before_action :set_one_month, only: :show
   before_action :correct_user_or_admin, only: :show
 
   def index
     @users = query.paginate(page: params[:page], per_page: 20)
-    @sea = params[:user][:name] if !@search_value.nil?
+    @search = params[:user][:name] if !@search_value.nil?
   end
 
   def show
@@ -36,7 +36,7 @@ class UsersController < ApplicationController
   def update
     if @user.update_attributes(user_params)
       flash[:success] = "ユーザー情報を更新しました。"
-      redirect_to @user
+      redirect_to users_url
     else
       render :edit
     end
@@ -53,6 +53,10 @@ class UsersController < ApplicationController
 
   def edit_basic_info_admin
   end
+  
+  def working_list
+    @users = User.all
+  end
 
   def update_basic_info
     if @user.update_attributes(basic_info_params)
@@ -65,7 +69,17 @@ class UsersController < ApplicationController
   
   def import
     # fileはtmp(temporary)に自動で一時保存される
-    User.import(params[:file])
+    if params[:file].presence
+      @regist_check = User.import(params[:file])
+      
+      if @regist_check
+        flash[:success] = "CSVファイルのインポートが完了しました。"
+      else
+        flash[:danger] = "更新できるデータがありませんでした。"
+      end
+    else
+      flash[:danger] = "CSVファイルが選択されていません。"
+    end
     redirect_to users_url
   end
 

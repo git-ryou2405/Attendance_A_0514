@@ -13,6 +13,7 @@ Rails.application.routes.draw do
       member do
         get 'edit_basic_info'
         get 'edit_basic_info_admin'
+        get 'working_list'
         patch 'update_basic_info'
         get 'attendances/edit_one_month'
         patch 'attendances/update_one_month'
