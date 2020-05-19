@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  get 'bases/new'
+
   get 'sessions/new'
 
   root 'static_pages#top'
@@ -14,11 +16,14 @@ Rails.application.routes.draw do
         get 'edit_basic_info'
         get 'edit_basic_info_admin'
         get 'working_list'
+        get 'overtime_apply'
         patch 'update_basic_info'
         get 'attendances/edit_one_month'
         patch 'attendances/update_one_month'
       end
       collection {post :import}
       resources :attendances, only: :update
+    end
+    resources :bases do
     end
   end

@@ -2,6 +2,7 @@ ja:
   activerecord:
     models:
       user: ユーザー
+      base: 拠点
     attributes:
         user:
           id: ID
@@ -17,10 +18,13 @@ ja:
           password_confirmation: パスワード確認
           created_at: 作成日
           updated_at: 更新日
-          
         attendance:
           worked_on: 日付
           started_at: 出社
           finished_at: 退社
           note: 備考
           user: ユーザーID
+        base:
+          base_no: 拠点番号
+          base_name: 拠点名
+          attendance_type: 勤怠種類

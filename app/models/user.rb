@@ -14,6 +14,8 @@ class User < ApplicationRecord
   validates :basic_work_time, presence: true
   validates :designated_work_start_time, presence: true
   validates :designated_work_end_time, presence: true
+  validates :employee_number, presence: true, length: { maximum: 4 }
+  validates :uid, presence: true, length: { maximum: 4 }
   has_secure_password
   validates :password, presence: true, length: { minimum: 6 }, allow_nil: true
   

@@ -1,6 +1,6 @@
+<% provide(:title, 'Basic info edit') %>
 <% provide(:class_text, 'basic-info') %>
 <% provide(:button_text, '更新') %>
-
 <h1>基本情報の更新（管理者）</h1>
 
 <div class="row">
@@ -8,9 +8,15 @@
     <%= form_with(model: @user, url: update_basic_info_user_path(@user), local: true, method: :patch) do |f| %>
       <%= render 'shared/error_messages', object: @user %>
 
+      <%= f.label :employee_number, class: "label-#{yield(:class_text)}" %>
+      <%= f.number_field :employee_number, class: "form-control" %>
+      
+      <%= f.label :uid, class: "label-#{yield(:class_text)}" %>
+      <%= f.text_field :uid, class: "form-control" %>
+
       <%= f.label :basic_work_time, class: "label-#{yield(:class_text)}" %>
       <%= f.time_field :basic_work_time, class: "form-control" %>
-
+      
       <div class="center">
         <%= f.submit yield(:button_text), class: "btn btn-primary btn-block btn-#{yield(:class_text)}" %>
       </div>

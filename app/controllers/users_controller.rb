@@ -53,16 +53,12 @@ class UsersController < ApplicationController
 
   def edit_basic_info_admin
   end
-  
-  def working_list
-    @users = User.all
-  end
 
   def update_basic_info
     if @user.update_attributes(basic_info_params)
       flash[:success] = "#{@user.name}の基本情報を更新しました。"
     else
-      flash[:danger] = "#{@user.name}の更新は失敗しました。<br>" + @user.errors.full_messages.join("<br>")
+      flash[:danger] = "#{@user.name}の更新は失敗しました。<br><li>" + @user.errors.full_messages.join("</li><li>")
     end
     redirect_to users_url
   end
@@ -83,14 +79,22 @@ class UsersController < ApplicationController
     redirect_to users_url
   end
 
+  def working_list
+    @users = User.all
+  end
+
+  def overtime_apply
+    @day = Date.parse(params[:day])
+  end
+
   private
 
     def user_params
-      params.require(:user).permit(:name, :email, :affiliation, :password, :password_confirmation)
+      params.require(:user).permit(:name, :email, :affiliation, :employee_number, :uid, :password, :basic_work_time, :designated_work_start_time, :designated_work_end_time)
     end
     
     def basic_info_params
-      params.require(:user).permit(:affiliation, :basic_work_time)
+      params.require(:user).permit(:name, :email, :affiliation, :employee_number, :uid, :password, :basic_work_time, :designated_work_start_time, :designated_work_end_time)
     end
     
     def query

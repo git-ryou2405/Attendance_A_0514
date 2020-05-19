@@ -1,12 +1,6 @@
-<%= form_with(model: @user, local: true) do |f| %>
-  <%= render 'shared/error_messages', object: @user %>
-
-      <%= f.label "勤務種類", class: "label-#{yield(:class_text)}" %><br>
-      
-        <div class="cp_ipselect cp_sl04">
-          <%= f.select :basic_work_time, ["出勤", "退勤"], class: "form-control" %>
-        </div>
-
+<%= form_with(model: user, url: update_basic_info_user_path(user), local: true, method: :patch) do |f| %>
+  <%= render 'shared/error_messages', object: @user = user %>
+  
   <%= f.label :name, class: "label-#{yield(:class_text)}" %>
   <%= f.text_field :name, class: "form-control" %>
 
@@ -25,9 +19,6 @@
   <%= f.label :password, class: "label-#{yield(:class_text)}" %>
   <%= f.password_field :password, class: "form-control" %>
 
-  <%= f.label :password_confirmation, class: "label-#{yield(:class_text)}" %>
-  <%= f.password_field :password_confirmation, class: "form-control" %>
-
   <%= f.label :basic_work_time, class: "label-#{yield(:class_text)}" %>
   <%= f.time_field :basic_work_time, class: "form-control" %>
   
@@ -36,6 +27,6 @@
   
   <%= f.label :designated_work_end_time, class: "label-#{yield(:class_text)}" %>
   <%= f.time_field :designated_work_end_time, class: "form-control" %>
-
+  
   <%= f.submit yield(:button_text), class: "btn btn-primary btn-block btn-#{yield(:class_text)}" %>
 <% end %>

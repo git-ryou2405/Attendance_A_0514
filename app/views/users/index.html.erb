@@ -1,5 +1,6 @@
-<% provide(:class_text, 'basic-info') %>
 <% provide(:title, 'All Users') %>
+<% provide(:class_text, 'basic-info') %>
+<% provide(:button_text, '編集する') %>
 <h1><%= @search_value ? "\" #{@search} \" の検索結果" : "全てのユーザー" %></h1>
 
 <!-- CSVインポート -->
@@ -10,6 +11,7 @@
 <% end %>
 </div>
 
+<!-- ユーザー検索 -->
 <div class="pull-right">
   <%= form_with(model: User.new, url: users_path, method: :get, local: true) do |f| %>
     <%= f.label :name, 'ユーザー名検索' %><br>
@@ -21,64 +23,34 @@
 
 <%= will_paginate %>
 <% @users.each do |user| %>
-<table>
-  <div class="row">
-    <tr>
-      <%= user.name %><br>
-      <td class="center">
-        <% if current_user.admin? && !current_user?(user) %>
-        <%= "|" %>
-          <%= link_to "削除", user, method: :delete,
-              data: { confirm: "削除してよろしいですか？" },
-              class: "btn btn-primary" %>
-        <% end %>
-      </td>
-    </tr>
-  </div>
-</table>
-  
-  <div class="panel panel-default">
-  <div class="panel-heading">
-    <h4 class="panel-title">
-      <button type="button" class="btn btn-lg btn-primary" data-toggle="collapse" data-target="#collapse<%= user.id %>">編集</button>
-    </h4>
-    </div>
-    <div id="collapse<%= user.id %>" class="panel-collapse collapse out">
-      <div class="panel-body">
-        <%= form_with(model: user, local: true) do |f| %>
-          
-          <%= f.label :name, class: "label-#{yield(:class_text)}" %>
-          <%= f.text_field :name, class: "form-control" %>
-        
-          <%= f.label :email, class: "label-#{yield(:class_text)}" %>
-          <%= f.email_field :email, class: "form-control" %>
-          
-          <%= f.label :affiliation, class: "label-#{yield(:class_text)}" %>
-          <%= f.text_field :affiliation, class: "form-control" %>
-          
-          <%= f.label :employee_number, class: "label-#{yield(:class_text)}" %>
-          <%= f.text_field :employee_number, class: "form-control" %>
-          
-          <%= f.label :uid, class: "label-#{yield(:class_text)}" %>
-          <%= f.text_field :uid, class: "form-control" %>
-          
-          <%= f.label :password, class: "label-#{yield(:class_text)}" %>
-          <%= f.password_field :password, class: "form-control" %>
-        
-          <%= f.label :basic_work_time, class: "label-#{yield(:class_text)}" %>
-          <%= f.time_field :basic_work_time, class: "form-control" %>
-          
-          <%= f.label :designated_work_start_time, class: "label-#{yield(:class_text)}" %>
-          <%= f.time_field :designated_work_start_time, class: "form-control" %>
-          
-          <%= f.label :designated_work_end_time, class: "label-#{yield(:class_text)}" %>
-          <%= f.time_field :designated_work_end_time, class: "form-control" %>
-          
-          <%= f.submit "編集する", class: "btn btn-primary btn-block btn-#{yield(:class_text)}" %>
-        <% end %>
+  <% unless user.admin? %>
+    <table>
+      <div class="row">
+        <tr>
+          <%= user.name %><br>
+          <td class="center">
+            <%= "|" %>
+              <%= link_to "削除", user, method: :delete,
+                  data: { confirm: "削除してよろしいですか？" },
+                  class: "btn btn-primary" %>
+          </td>
+        </tr>
+      </div>
+    </table>
+    
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h4 class="panel-title">
+          <button type="button" class="btn btn-lg btn-primary" data-toggle="collapse" data-target="#collapse<%= user.id %>">編集</button>
+        </h4>
+      </div>
+      <div id="collapse<%= user.id %>" class="panel-collapse collapse out">
+        <div class="panel-body">
+          <%= render 'users/form_index',{user: user} %>
+        </div>
       </div>
     </div>
-  </div>
+  <% end %>
 <% end %>
 <%= will_paginate %>
 

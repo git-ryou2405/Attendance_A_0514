@@ -38,7 +38,7 @@
 </div>
 
 <div>
-  <table class="table table-bordered table-condensed table-hover" id="table-attendances">
+  <table class="table table-bordered table-striped table-condensed table-hover" id="table-attendances">
     <thead>
       <tr>
         <th rowspan="3">残業申請</th>
@@ -73,7 +73,7 @@
       <% @attendances.each do |day| %>
         <tr>
           <td><!--  -->
-            <%= link_to "残業申請", '#', class: "btn btn-primary" %>
+            <%= link_to "残業申請", overtime_apply_user_path(@user, params: { day: day.worked_on }), remote: true, class: "btn btn-primary" %>
           </td>
           <td><!-- 日付 --><%= l(day.worked_on, format: :short) %></td>
           <td>
@@ -142,5 +142,8 @@
     <%= link_to "↑", current_user, class: "btn btn-default" %>
     <%= link_to "ユーザ一覧へ", users_path, class: "btn btn-default" %>
   </div>
-
 </div>
+
+
+<!--モーダルウインドウ表示-->
+<div id="overtime_apply" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>

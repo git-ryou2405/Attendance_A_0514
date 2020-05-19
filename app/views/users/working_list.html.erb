@@ -1,3 +1,4 @@
+<% provide(:title, 'Working list') %>
 <h1>出勤中社員一覧</h1>
 
 <table class="table table-bordered table-striped">
@@ -14,7 +15,7 @@
         <!--出勤状況を順に確認する-->
         <% user.attendances.each do |attendance| %>
           <!--本日の日付情報のみ確認する-->
-          <% if attendance.worked_on == Date.today %>
+          <% if attendance.worked_on == Date.current %>
             <!--出社しており、退社してなければ表示する-->
             <% if attendance.started_at.present? && attendance.finished_at.nil? %>
               <tr>
