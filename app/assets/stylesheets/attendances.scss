@@ -1,3 +1,41 @@
 // Place all the styles related to the Attendances controller here.
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
+
+.table-position td{
+  text-align: center;
+  vertical-align: middle;
+}
+
+.dropdown_menu {
+  position: relative;
+}
+.dropdown_menu select {
+  border: 1px solid #ccc;
+  padding: .40em;
+  width: 100%;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  cursor: pointer;
+}
+.dropdown_menu select::-ms-expand {
+　display: none;
+}
+.dropdown_menu::after {
+  position: absolute;
+  z-index: 2;
+  font-size: 15px;
+  display: block;
+	position: absolute;
+	top: 0.8em;
+	right: 0.9em;
+	width: 0;
+	height: 0;
+	padding: 0;
+	content: '';
+	border-left: 5px solid transparent;
+	border-right: 5px solid transparent;
+	border-top: 7px solid #666666;
+	pointer-events: none;
+}

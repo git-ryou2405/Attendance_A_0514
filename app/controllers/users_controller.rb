@@ -54,6 +54,10 @@ class UsersController < ApplicationController
   def edit_basic_info_admin
   end
 
+  def working_list
+    @users = User.all
+  end
+
   def update_basic_info
     if @user.update_attributes(basic_info_params)
       flash[:success] = "#{@user.name}の基本情報を更新しました。"
@@ -77,14 +81,6 @@ class UsersController < ApplicationController
       flash[:danger] = "CSVファイルが選択されていません。"
     end
     redirect_to users_url
-  end
-
-  def working_list
-    @users = User.all
-  end
-
-  def overtime_apply
-    @day = Date.parse(params[:day])
   end
 
   private

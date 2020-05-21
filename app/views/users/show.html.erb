@@ -3,9 +3,9 @@
   <table class="table table-bordered table-condensed user-table">
     <tr>
       <td>
-        <%= link_to "⇦", user_path(date: @first_day.prev_month), class: "btn btn-sm btn-info" %>
+        <%= link_to "⇦", user_path(date: @first_day.prev_month), class: "btn btn-sm btn-primary" %>
         <%= "　【" + l(@first_day, format: :middle) + "】時間管理表　" %>
-        <%= link_to "⇨", user_path(date: @first_day.next_month), class: "btn btn-sm btn-info" %>
+        <%= link_to "⇨", user_path(date: @first_day.next_month), class: "btn btn-sm btn-primary" %>
       </td>
       <td>
         指定勤務開始時間：<%= format_basic_info(@user.designated_work_start_time) %><br>
@@ -73,7 +73,7 @@
       <% @attendances.each do |day| %>
         <tr>
           <td><!--  -->
-            <%= link_to "残業申請", overtime_apply_user_path(@user, params: { day: day.worked_on }), remote: true, class: "btn btn-primary" %>
+            <%= link_to "残業申請", attendances_overtime_apply_user_path(params: { day: day }), remote: true, class: "btn btn-primary" %>
           </td>
           <td><!-- 日付 --><%= l(day.worked_on, format: :short) %></td>
           <td>

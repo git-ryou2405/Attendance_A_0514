@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20200517163758) do
+ActiveRecord::Schema.define(version: 20200520061702) do
 
   create_table "attendances", force: :cascade do |t|
     t.date "worked_on"
@@ -20,6 +20,12 @@ ActiveRecord::Schema.define(version: 20200517163758) do
     t.integer "user_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "o_approval"
+    t.string "o_request"
+    t.datetime "end_time", default: "2020-05-19 15:00:00"
+    t.string "business_process"
+    t.boolean "nextday", default: false
+    t.boolean "change", default: false
     t.index ["user_id"], name: "index_attendances_on_user_id"
   end
 
@@ -40,13 +46,13 @@ ActiveRecord::Schema.define(version: 20200517163758) do
     t.string "remember_digest"
     t.boolean "admin", default: false
     t.string "affiliation"
-    t.datetime "basic_work_time", default: "2020-05-18 23:00:00"
-    t.datetime "designated_work_start_time", default: "2020-05-19 00:00:00"
-    t.datetime "designated_work_end_time", default: "2020-05-19 08:30:00"
+    t.datetime "basic_work_time", default: "2020-05-19 23:00:00"
+    t.datetime "designated_work_start_time", default: "2020-05-20 00:00:00"
+    t.datetime "designated_work_end_time", default: "2020-05-20 08:30:00"
     t.integer "employee_number"
     t.string "uid"
     t.boolean "superior", default: false
-    t.datetime "work_time", default: "2020-05-18 22:30:00"
+    t.datetime "work_time", default: "2020-05-19 22:30:00"
     t.index ["email"], name: "index_users_on_email", unique: true
   end
 
