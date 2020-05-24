@@ -11,7 +11,7 @@
     </div>
     
     <div class="modal-body">
-      <%= form_with(model: @attendances, url: attendances_apply_overtime_user_path(date: @day.worked_on), local: true, method: :patch) do |f| %>
+      <%= form_with(model: @user, url: attendances_update_overtime_user_path(date: @day.worked_on), local: true, method: :patch) do |f| %>
         <div class="row">
           <div class="col-md-10 col-md-offset-1">
             <table class="table table-bordered table-striped table-position">
@@ -39,13 +39,12 @@
                         <%= @wday %>
                       <% end %>
                     </td>
-                    <td><%= attendance.time_select :end_time %></td>
+                    <td><%= attendance.time_select :end_time, :minute_step => 15 %></td>
                     <td><%= attendance.check_box :nextday %></td>
                     <td><%= attendance.text_field :business_process %></td>
-                    
                     <td>
                       <div class="dropdown_menu">
-                      <%= f.select :o_request, ["","上長A", "上長B"] %>
+                        <%= attendance.select :o_request, ['', '上長A', '上長B'], {} %>
                       </div>
                     </td>
                   </tr>

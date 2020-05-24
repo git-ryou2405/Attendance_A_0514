@@ -13,6 +13,10 @@ class UsersController < ApplicationController
 
   def show
     @worked_sum = @attendances.where.not(started_at: nil).count
+    @users = User.all
+    @r_count = 0
+    @a_count = 0
+    @o_count = 0
   end
 
   def new

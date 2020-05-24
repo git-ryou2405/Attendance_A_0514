@@ -45,7 +45,7 @@
   
   <div id="collapse_base" class="panel-collapse collapse out">
     <div class="panel-body">
-      <%= form_with(model: @base, url: bases_path, local: true, method: :path) do |f| %>
+      <%= form_with(model: @base, url: bases_path, local: true, method: :post) do |f| %>
       
         <%= f.label "拠点番号", class: "label-#{yield(:class_text)}" %>
         <%= f.number_field :base_no, class: "form-control" %>

@@ -34,8 +34,9 @@ class BasesController < ApplicationController
   end
   
   def destroy
+    @basename = @base.base_name
     @base.destroy
-    flash[:success] = "拠点の削除が完了しました。"
+    flash[:success] = "#{@basename}拠点の削除が完了しました。"
     redirect_to bases_path
   end
   
