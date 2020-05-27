@@ -62,6 +62,7 @@ class AttendancesController < ApplicationController
         attendance.save!(context: :overtime_update)
         @worked_on = l(attendance.worked_on, format: :short)
         @o_request = attendance.o_request
+        
       end
     end
     flash[:success] = "#{@worked_on}の残業申請を\"#{@o_request}\"へ送信しました。"
@@ -72,8 +73,8 @@ class AttendancesController < ApplicationController
   end
   
   def notice_overtime
-    @users = User.all
-    
+    @current_user = @user
+    req_overtime_count
   end
   
   def update_notice_overtime
@@ -101,4 +102,19 @@ class AttendancesController < ApplicationController
         redirect_to(root_url)
       end
     end
+    
+    def req_overtime_count
+      @users = User.all
+      @users.each do |user|
+        user.attendances.each do |attendance|
+          if attendance.o_request == @user.name
+            
+            @req_attendance = attendance
+            @req_attendance.o_reqcount =+ 1
+            @req_attendance.save
+          end
+        end
+      end
+    end
+    
 end

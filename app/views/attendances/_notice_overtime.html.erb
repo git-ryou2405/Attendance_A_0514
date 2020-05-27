@@ -1,4 +1,5 @@
 <% provide(:title, "Notice OverTime") %>
+<% @aaa = 0 %>
 
 <div class="modal-dialog modal-lg modal-dialog-center">
   <div class="modal-content">
@@ -12,33 +13,27 @@
     
     <div class="modal-body">
       <% @users.each do |user| %>
-        <% @o_check = false %>
-        
-          <!--attendanceで回す-->
-          <% user.attendances.each do |attendance| %>
-            <% if attendance.o_request == @user.name %>
-              <%= "見つかった申請者が、現在アカウントと一致しました。" %><br>
-              <% @o_check = true %>
-            <% end %>
-          <% end %>
-          <!--attendanceで回す-->
-        
-        <% if @o_check == true %>
-        <h3 class="modal-title center"><%= "【#{user.name}からの残業申請】" %></h3>
-          <!--dayで回す-->
-          <% user.attendances.each do |day| %>
-            <%= "debug：#{day.worked_on}" %><br>
-            <%= "debug：#{day.o_request}" %><br>
-          <% end %>
+      
+        <!--dayで回す-->
+        <% user.attendances.each do |day| %>
+        <% @o_check = 0 %>
           
-          <% user.attendances.each do |day| %>
+          <% if day.o_request == @current_user.name %>
+            <% @o_check = day.o_reqcount %>
+          <% end %>
+        
+          <% if @o_check >= 1 %>
+          <h3 class="modal-title center"><%= "【#{user.name}からの残業申請】" %></h3>
+          
             <% @user = @users.find(user.id) %>
             <% @day = @user.attendances.find(day.id) %>
             
-            <% form_with(model: @user, url: attendances_update_notice_overtime_user_path(date: @day.worked_on), local: true, method: :patch) do |f| %>
+            <%= form_with(model: @user, url: attendances_update_notice_overtime_user_path(date: @day.worked_on), local: true, method: :patch) do |f| %>
+            
             <div class="row">
               <div class="col-md-10 col-md-offset-1">
                 <table class="table table-bordered table-striped table-position">
+                  
                   <thead>
                     <tr>
                       <th><%= "tablehedder1" %></th>
@@ -47,8 +42,12 @@
                     </tr>
                   </thead>
                   
-                  <% if @day.o_request == @user.name %>
-                  <%= "debug：#{day.worked_on}：この日のフォームを作成する" %><br>
+                  <% if @aaa == 1 %>
+                    <% binding.pry %>
+                    <% @aaa = 1 %>
+                  <% end %>
+                  
+                  <% if @day.o_request == @current_user.name %>
                   <tbody>
                     <%= f.fields_for "attendances[]", @day do |attendance| %>
                     <tr>
@@ -63,15 +62,14 @@
               </div>
               
               <div class="center">
-                <%= f.submit "申請する", class: "btn btn-md btn-primary" %>
+                <%= f.submit "編集する", class: "btn btn-md btn-primary" %>
               </div>
-              <%= "↑　ここまで#{user.name}のフォームです。" %>
               
             </div>
             <% end %>
           <% end %>
-          <!--dayで回す-->
         <% end %>
+        <!--dayで回す-->
         
       <% end %>
     </div>
