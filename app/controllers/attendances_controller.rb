@@ -62,7 +62,7 @@ class AttendancesController < ApplicationController
         attendance.save!(context: :overtime_update)
         @worked_on = l(attendance.worked_on, format: :short)
         @o_request = attendance.o_request
-        
+        req_overtime_count
       end
     end
     flash[:success] = "#{@worked_on}の残業申請を\"#{@o_request}\"へ送信しました。"
@@ -73,11 +73,12 @@ class AttendancesController < ApplicationController
   end
   
   def notice_overtime
-    @current_user = @user
-    req_overtime_count
+    @notice_user = User.where(id: Attendance.where(o_request: @user.name).select(:user_id))
+    @attendance_lists = Attendance.where(o_request: @user.name)
   end
   
   def update_notice_overtime
+
   end
 
   private

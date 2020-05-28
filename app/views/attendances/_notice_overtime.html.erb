@@ -1,10 +1,8 @@
 <% provide(:title, "Notice OverTime") %>
-<% @aaa = 0 %>
-
+<% aaa = 0 %>
 <div class="modal-dialog modal-lg modal-dialog-center">
   <div class="modal-content">
-    
-    <div class="modal">
+  <div class="modal-header" style="border:none">
       <!--×マーク-->
       <button type="button" class="close" data-dismiss="modal" aria-label="Close">
         <span aria-hidden="true">&times;</span>
@@ -12,66 +10,74 @@
     </div>
     
     <div class="modal-body">
-      <% @users.each do |user| %>
-      
-        <!--dayで回す-->
-        <% user.attendances.each do |day| %>
-        <% @o_check = 0 %>
-          
-          <% if day.o_request == @current_user.name %>
-            <% @o_check = day.o_reqcount %>
-          <% end %>
-        
-          <% if @o_check >= 1 %>
-          <h3 class="modal-title center"><%= "【#{user.name}からの残業申請】" %></h3>
-          
-            <% @user = @users.find(user.id) %>
-            <% @day = @user.attendances.find(day.id) %>
+    <% @notice_user.each do |notice_user| %>
+    <h4 style="text-align:center"><%= "【#{notice_user.name}からの残業申請】" %></h4>
+    
+    <% @attendance_lists.where(user_id: notice_user.id).each do |attendance| %>
+    <%= form_with(model: notice_user, url: attendances_update_notice_overtime_user_path(notice_user, attendance.id), local: true, method: :patch) do |f| %>
+
+      <div class="row">
+        <div class="col-md-11 position">
+          <table class="table table-bordered table-striped table-position table-condensed">
             
-            <%= form_with(model: @user, url: attendances_update_notice_overtime_user_path(date: @day.worked_on), local: true, method: :patch) do |f| %>
-            
-            <div class="row">
-              <div class="col-md-10 col-md-offset-1">
-                <table class="table table-bordered table-striped table-position">
-                  
-                  <thead>
-                    <tr>
-                      <th><%= "tablehedder1" %></th>
-                      <th><%= "tablehedder2" %></th>
-                      <th><%= "tablehedder3" %></th>
-                    </tr>
-                  </thead>
-                  
-                  <% if @aaa == 1 %>
-                    <% binding.pry %>
-                    <% @aaa = 1 %>
-                  <% end %>
-                  
-                  <% if @day.o_request == @current_user.name %>
-                  <tbody>
-                    <%= f.fields_for "attendances[]", @day do |attendance| %>
-                    <tr>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                    </tr>
+            <thead>
+              <tr>
+                <th><%= Attendance.human_attribute_name :worked_on %></th>
+                <th><%= I18n.t('day_name') %></th>
+                <th><%= Attendance.human_attribute_name :end_time %></th>
+                <th><%= User.human_attribute_name :designated_work_end_time %></th>
+                <th><%= "時間外残業" %></th>
+                <th><%= Attendance.human_attribute_name :business_process %></th>
+                <th><%= Attendance.human_attribute_name :o_approval %></th>
+                <th><%= Attendance.human_attribute_name :change %></th>
+                <th><%= "勤怠を確認する" %></th>
+              </tr>
+            </thead>
+
+              <tbody>
+                <tr>
+                  <td><!-- 日付 -->
+                    <%= l(attendance.worked_on, format: :short) %>
+                  </td>
+                  <td><!-- 曜日 -->
+                    <% @wday = $days_of_the_week[attendance.worked_on.wday] %>
+                    <% if @wday == '土' %><font color="blue"><%= @wday %></font>
+                    <% elsif @wday == '日' %><font color="red"><%= @wday %></font>
+                    <% elsif %>
+                      <%= @wday %>
                     <% end %>
-                  </tbody>
+                  </td>
+                  <td><!-- 終了予定時刻 --><%= l(attendance.end_time, format: :time) %></td>
+                  <td><!-- 指定勤務終了時間 --><%= l(notice_user.designated_work_end_time, format: :time) %></td>
+                  <td><!-- 時間外残業 --><%=  %></td>
+                  <td><!-- 業務処理内容 --><%= attendance.business_process %></td>
+                  
+                  <%= f.fields_for "attendances[]", attendance do |at| %>
+                    <td><!-- 指示者確認㊞ -->
+                      <div class="dropdown_menu">
+                        <%= at.select :o_approval, ['', 'なし', '申請中', '承認', '拒否'], {} %>
+                      </div>
+                    </td>
+                    <td><!-- 変更 -->
+                      <%= at.check_box :change %>
+                    </td>
                   <% end %>
-                </table>
-              </div>
-              
-              <div class="center">
-                <%= f.submit "編集する", class: "btn btn-md btn-primary" %>
-              </div>
-              
-            </div>
-            <% end %>
-          <% end %>
-        <% end %>
-        <!--dayで回す-->
-        
-      <% end %>
+                  
+                  <td><!-- 勤怠の確認 -->
+                    <%= link_to "確認", user_path(notice_user.id), :target=>["_new"], class: "btn btn-primary" %>
+                  </td>
+                </tr>
+              </tbody>
+          
+            
+          </table>
+        </div> 
+      </div>
+    <% end %>
+    <% end %>
+
+    <% end %>
+      
     </div>
   </div>
 </div>

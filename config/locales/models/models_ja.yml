@@ -22,6 +22,12 @@ ja:
           worked_on: 日付
           started_at: 出社
           finished_at: 退社
+          end_time: 終了予定時刻
+          nextday: 翌日
+          business_process: 業務処理内容
+          o_approval: 指示者確認㊞
+          o_request: 申請者
+          change: 変更
           note: 備考
           user: ユーザーID
         base:

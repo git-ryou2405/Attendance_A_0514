@@ -33,7 +33,7 @@ class ApplicationController < ActionController::Base
   # アクセスしたユーザーが
   # 現在ログインしているユーザーまたはシステム管理者権限所有か確認します。
   def correct_user_or_admin
-    unless current_user?(@user) || current_user.admin?
+    unless current_user?(@user) || current_user.admin? || current_user.superior?
       flash[:danger] = "権限がありません。"
       redirect_to(root_url)
     end

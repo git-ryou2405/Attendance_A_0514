@@ -2,10 +2,22 @@
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
 
-.table-position td{
-  text-align: center;
+.table-position {
   vertical-align: middle;
+  text-align: center;
 }
+
+.position {
+  width: 80%;
+  height: 80%;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%);
+}
+
+
+/* ドロップダウンメニュー */ 
 
 .dropdown_menu {
   position: relative;
@@ -13,7 +25,7 @@
 .dropdown_menu select {
   border: 1px solid #ccc;
   padding: .40em;
-  width: 100%;
+  width: 80%;
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
@@ -25,11 +37,11 @@
 .dropdown_menu::after {
   position: absolute;
   z-index: 2;
-  font-size: 15px;
+  font-size: 10px;
   display: block;
 	position: absolute;
-	top: 0.8em;
-	right: 0.9em;
+	top: 1.2em;
+	right: 2.2em;
 	width: 0;
 	height: 0;
 	padding: 0;

@@ -41,7 +41,7 @@
     <%= "【残業申請のお知らせ】" %>
     <% @users.each do |user| %>
       <% user.attendances.each do |attendance| %>
-        <% if attendance.o_request == @user.name  %>
+        <% if attendance.o_request == @user.name %>
           <% @o_count += 1 %>
         <% end %>
       <% end %>
