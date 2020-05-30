@@ -104,7 +104,7 @@ GEM
       pry (~> 0.13.0)
     pry-rails (0.3.9)
       pry (>= 0.10.4)
-    puma (3.12.4)
+    puma (3.12.6)
     rack (2.2.2)
     rack-test (1.1.0)
       rack (>= 1.0, < 3)
@@ -209,7 +209,7 @@ DEPENDENCIES
   pg (= 0.20.0)
   pry-byebug
   pry-rails
-  puma (~> 3.7)
+  puma (~> 3.12)
   rails (~> 5.1.6)
   rails-i18n
   roo
