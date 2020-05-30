@@ -15,16 +15,16 @@
         </tr>
       </thead>
       <tbody>
-        <% @attendances.each do |day| %>
-          <%= f.fields_for "attendances[]", day do |attendance| %>
+        <% @attendances.each do |att| %>
+          <%= f.fields_for "attendances[]", att do |attendance| %>
             <tr>
               <td>
                 <!--日付 -->
-                <%= l(day.worked_on, format: :short) %>
+                <%= l(att.worked_on, format: :short) %>
               </td>
               <td>
                 <!-- 曜日 -->
-                <% @wday = $days_of_the_week[day.worked_on.wday] %>
+                <% @wday = $days_of_the_week[att.worked_on.wday] %>
                 <% if @wday == '土' %><font color="blue"><%= @wday %></font>
                 <% elsif @wday == '日' %><font color="red"><%= @wday %></font>
                 <% elsif %>
@@ -33,7 +33,7 @@
               </td>
               
               <!-- 出社、退社 -->
-              <% if Date.current < day.worked_on %>
+              <% if Date.current < att.worked_on %>
                 <td><%= attendance.time_field :started_at, readonly: true, class: "form-control" %></td>
                 <td><%= attendance.time_field :finished_at, readonly: true, class: "form-control" %></td>
               <% else %>
@@ -43,8 +43,8 @@
               
               <!-- 在社時間 -->
               <td>
-                <% if day.started_at.present? && day.finished_at.present? %>
-                  <%= working_times(day.started_at.floor_to(15.minutes), day.finished_at.floor_to(15.minutes)) %>
+                <% if att.started_at.present? && att.finished_at.present? %>
+                  <%= working_times(att.started_at.floor_to(15.minutes), att.finished_at.floor_to(15.minutes)) %>
                 <% end %>
               </td>
               

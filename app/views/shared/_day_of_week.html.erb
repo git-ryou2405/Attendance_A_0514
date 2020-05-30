@@ -1,0 +1,8 @@
+<% @wday = $days_of_the_week[@oneday.worked_on.wday] %>
+<% if @wday == '土' %>
+  <font color="blue"><%= @wday %></font>
+<% elsif @wday == '日' %>
+  <font color="red"><%= @wday %></font>
+<% elsif %>
+  <%= @wday %>
+<% end %>

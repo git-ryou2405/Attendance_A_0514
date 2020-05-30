@@ -1,5 +1,4 @@
 <% provide(:title, @user.name) %>
-<% aaa = 0 %>
 <div class="modal-dialog modal-lg modal-dialog-center">
   <div class="modal-content">
   <div class="modal-header" style="border:none">
@@ -9,16 +8,9 @@
       </button>
     </div>
     
-    <h4 class="modal-title" style="text-align:center">【残業申請】</h4>
     <div class="modal-body">
-    <%= form_with(model: @user, url: attendances_update_overtime_user_path(date: @day.worked_on), local: true, method: :patch) do |f| %>
-
-<!--debugger-->
-  <% if aaa == 0 %>
-    <% binding.pry %>
-    <% aaa = 1 %>
-  <% end %>
-<!--debugger-->
+    <h4 class="modal-title" style="text-align:center">【残業申請】</h4>
+    <%= form_with(model: @user, url: attendances_update_overtime_user_path, local: true, method: :patch) do |f| %>
 
       <div class="row">
         <div class="col-md-10 col-md-offset-1">
@@ -35,24 +27,25 @@
             </thead>
 
             <tbody>
-              <%= f.fields_for "attendances[]", @day do |attendance| %>
+              <%= f.fields_for "attendances[]", @att_id do |attendance| %>
                 <tr>
-                  <td><%= l(@day.worked_on, format: :short) %></td>
+                  <td><%= l(@att_id.worked_on, format: :short) %></td>
                   <td>
                     <!-- 曜日 -->
-                    <% @wday = $days_of_the_week[@day.worked_on.wday] %>
-                    <% if @wday == '土' %><font color="blue"><%= @wday %></font>
-                    <% elsif @wday == '日' %><font color="red"><%= @wday %></font>
-                    <% elsif %>
-                      <%= @wday %>
-                    <% end %>
+                    <%= render 'shared/day_of_week', object: @oneday = @att_id %>
                   </td>
                   <td><%= attendance.time_select :end_time, :minute_step => 15 %></td>
                   <td><%= attendance.check_box :nextday %></td>
                   <td><%= attendance.text_field :business_process %></td>
                   <td>
                     <div class="dropdown_menu">
-                      <%= attendance.select :o_request, ['', '上長A', '上長B'], {} %>
+                      <% if @user.name != "上長A" %>
+                        <%= attendance.select :o_request, ['', '上長A', '上長B'], {} %>
+                      <% elsif @user.name = "上長A" %>
+                        <%= attendance.select :o_request, ['', '上長B'], {} %>
+                      <% else %>
+                        <%= attendance.select :o_request, ['', '上長A'], {} %>
+                      <% end %>
                     </div>
                   </td>
                 </tr>

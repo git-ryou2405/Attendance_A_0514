@@ -27,7 +27,10 @@ class ApplicationController < ActionController::Base
   
   # システム管理権限所有かどうか判定します。
   def admin_user
-    redirect_to root_url unless current_user.admin?
+    unless current_user.admin?
+      flash[:danger] = "権限がありません。"
+      redirect_to root_url
+    end
   end
 
   # アクセスしたユーザーが
@@ -35,7 +38,7 @@ class ApplicationController < ActionController::Base
   def correct_user_or_admin
     unless current_user?(@user) || current_user.admin? || current_user.superior?
       flash[:danger] = "権限がありません。"
-      redirect_to(root_url)
+      redirect_to root_url
     end
   end
 
@@ -53,7 +56,7 @@ class ApplicationController < ActionController::Base
     unless one_month.count == @attendances.count # それぞれの件数（日数）が一致するか評価します。
       ActiveRecord::Base.transaction do # トランザクションを開始します。
         # 繰り返し処理により、1ヶ月分の勤怠データを生成します。
-        one_month.each { |day| @user.attendances.create!(worked_on: day) }
+        one_month.each {|day| @user.attendances.create!(worked_on: day) }
       end
       @attendances = @user.attendances.where(worked_on: @first_day..@last_day).order(:worked_on)
     end

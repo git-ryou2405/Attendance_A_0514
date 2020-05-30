@@ -8,8 +8,7 @@
 /* ユーザー情報下ボタン */
 
 .btn-users-show {
-  margin-top: -10px;
-  margin-bottom: 10px;
+  margin-top: 10px;
 }
 
 /* ユーザー勤怠情報テーブル */
@@ -62,3 +61,12 @@
   width: 30%;
 }
 
+/* show */
+
+.box1 {
+    color: #f00;
+    font-weight: bold;
+    padding: 0.1em 0.2em;
+    border: solid 2px #f00;
+    display: inline-block;
+}
