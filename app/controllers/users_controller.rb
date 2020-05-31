@@ -5,6 +5,8 @@ class UsersController < ApplicationController
   before_action :admin_user, only: [:index, :destroy, :edit_basic_info, :update_basic_info, :edit_basic_info_admin, :working_list]
   before_action :set_one_month, only: :show
   before_action :correct_user_or_admin, only: :show
+  before_action :show_admin_check, only: :show
+  before_action :set_year_date, only: :show
 
   def index
     @users = query.paginate(page: params[:page], per_page: 20)
@@ -12,10 +14,6 @@ class UsersController < ApplicationController
   end
 
   def show
-    if @user.admin?
-      flash[:danger] = "権限がありません。"
-      redirect_to root_url
-    end
     @users = User.all
     @worked_sum = @attendances.where.not(started_at: nil).count
     @r_count = 0

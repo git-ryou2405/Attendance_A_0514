@@ -64,9 +64,19 @@
 /* show */
 
 .box1 {
-    color: #f00;
-    font-weight: bold;
-    padding: 0.1em 0.2em;
-    border: solid 2px #f00;
-    display: inline-block;
+  color: #f00;
+  font-weight: bold;
+  padding: 0.1em 0.2em;
+  border: solid 2px #f00;
+  display: inline-block;
+}
+
+.approval {
+  font-size: 1em;
+  text-decoration: underline;
+}
+
+.w-100px {
+  width: 100px;
+  margin: 5px;
 }

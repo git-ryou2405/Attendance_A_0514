@@ -1,5 +1,6 @@
 <% provide(:title, @user.name) %>
 <div>
+  <!--ユーザー情報テーブル-->
   <table class="table table-bordered table-condensed user-table">
     <tr>
       <td>
@@ -178,9 +179,21 @@
         <td colspan="1">在社時間合計</td>
         <td colspan="5"></td>
         <td rowspan="2">
-          所属長承認　未<br>
+          <% @req_month = Request.where(r_month: @first_day.month, user_id: @user).first %>
+          <span class="approval"><%= "所属長承認" %></span><br>
+          <% if @req_month.r_approval.nil? %>
+            <%= "未申請" %><br>
+          <% else %>
+            <%= "#{@req_month.r_request} [#{@req_month.r_approval}]" %><br>
+          <% end %>
           
-          <%= link_to "申請", '#', class: "btn btn-primary" %>
+          <%= form_with(model: @requests, url: user_request_path(@user, month: @first_day.month), local: true, method: :patch) do |f| %>
+            <div class="dropdown_menu">
+              <%= f.select :r_request, ['','上長A','上長B'], {} %><br>
+            </div>
+            <%= f.submit "申請", class: "btn btn-primary w-100px" %>
+          <% end %>
+          
         </td>
       </tr>
       <tr>

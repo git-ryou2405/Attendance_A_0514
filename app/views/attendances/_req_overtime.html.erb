@@ -39,12 +39,12 @@
                   <td><%= attendance.text_field :business_process %></td>
                   <td>
                     <div class="dropdown_menu">
-                      <% if @user.name != "上長A" %>
-                        <%= attendance.select :o_request, ['', '上長A', '上長B'], {} %>
-                      <% elsif @user.name = "上長A" %>
+                      <% if @user.name == "上長A" %>
                         <%= attendance.select :o_request, ['', '上長B'], {} %>
-                      <% else %>
+                      <% elsif @user.name == "上長B" %>
                         <%= attendance.select :o_request, ['', '上長A'], {} %>
+                      <% else %>
+                        <%= attendance.select :o_request, ['', '上長A', '上長B'], {} %>
                       <% end %>
                     </div>
                   </td>

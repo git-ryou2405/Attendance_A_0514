@@ -1,10 +1,11 @@
 class AttendancesController < ApplicationController
-  before_action :set_user, only: [:edit_one_month, :update_one_month, :req_overtime, :update_overtime, :notice_overtime, :update_notice_overtime]
+  before_action :set_user, only: [:edit_one_month, :update_one_month, :req_overtime, :update_overtime, :notice_overtime]
   before_action :logged_in_user, only: [:update, :edit_one_month, :req_overtime]
   before_action :admin_or_correct_user, only: [:update, :edit_one_month, :update_one_month]
   before_action :set_one_month, only: [:edit_one_month, :req_overtime, :update_overtime, :notice_overtime, :update_notice_overtime]
 
   UPDATE_ERROR_MSG = "勤怠登録に失敗しました。やり直してください。"
+  NOTICE_ERROR_MSG = "入力が足りません。申請をやり直してください。"
 
   def update
     @user = User.find(params[:user_id])
@@ -70,7 +71,7 @@ class AttendancesController < ApplicationController
     flash[:success] = "#{@worked_on}の残業申請を\"#{@o_request}\"へ送信しました。"
     redirect_to user_url(@user)
   rescue ActiveRecord::RecordInvalid # トランザクションによるエラーの分岐です。
-    flash[:danger] = "入力が足りません。申請をやり直してください。"
+    flash[:danger] = NOTICE_ERROR_MSG
     redirect_to user_url(@user)
   end
   
@@ -100,7 +101,7 @@ class AttendancesController < ApplicationController
     end
     redirect_to user_url(@user)
   rescue ActiveRecord::RecordInvalid # トランザクションによるエラーの分岐です。
-    flash[:danger] = "入力が足りません。申請をやり直してください。"
+    flash[:danger] = NOTICE_ERROR_MSG
     redirect_to user_url(@user)
   end
 
@@ -124,15 +125,15 @@ class AttendancesController < ApplicationController
     # 残業時間の計算
     def overtime_calc(attendance)
       # 比較用指定勤務終了時間の作成
-      @plan_time = Time.local(attendance.end_time.year, attendance.end_time.month, attendance.end_time.day,
+      plan_time = Time.local(attendance.end_time.year, attendance.end_time.month, attendance.end_time.day,
                       @user.designated_work_end_time.hour-9, @user.designated_work_end_time.min, 0)
       # タイムゾーンの修正
-      @plan_time.in_time_zone("Asia/Tokyo")
+      plan_time.in_time_zone("Asia/Tokyo")
       
       if attendance.nextday.present?
-        attendance.overtime = ((attendance.end_time.since(1.days) - @plan_time) / 3600)
+        attendance.overtime = ((attendance.end_time.since(1.days) - plan_time) / 3600)
       else
-        attendance.overtime = ((attendance.end_time - @plan_time) / 3600)
+        attendance.overtime = ((attendance.end_time - plan_time) / 3600)
       end
     end
     

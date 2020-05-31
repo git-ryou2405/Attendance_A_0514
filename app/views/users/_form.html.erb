@@ -1,11 +1,11 @@
 <%= form_with(model: @user, local: true) do |f| %>
   <%= render 'shared/error_messages', object: @user %>
 
-      <%= f.label "勤務種類", class: "label-#{yield(:class_text)}" %><br>
-      
-        <div class="cp_ipselect cp_sl04">
-          <%= f.select :basic_work_time, ["出勤", "退勤"], class: "form-control" %>
-        </div>
+    <%= f.label "勤務種類", class: "label-#{yield(:class_text)}" %><br>
+  
+    <div class="cp_ipselect cp_sl04">
+      <%= f.select :basic_work_time, ["出勤", "退勤"], class: "form-control" %>
+    </div>
 
   <%= f.label :name, class: "label-#{yield(:class_text)}" %>
   <%= f.text_field :name, class: "form-control" %>
