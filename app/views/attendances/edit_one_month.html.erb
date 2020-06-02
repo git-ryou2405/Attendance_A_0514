@@ -14,6 +14,7 @@
           <th>備考</th>
         </tr>
       </thead>
+      
       <tbody>
         <% @attendances.each do |att| %>
           <%= f.fields_for "attendances[]", att do |attendance| %>
@@ -24,12 +25,7 @@
               </td>
               <td>
                 <!-- 曜日 -->
-                <% @wday = $days_of_the_week[att.worked_on.wday] %>
-                <% if @wday == '土' %><font color="blue"><%= @wday %></font>
-                <% elsif @wday == '日' %><font color="red"><%= @wday %></font>
-                <% elsif %>
-                  <%= @wday %>
-                <% end %>
+                <%= render 'shared/day_of_week', object: @oneday = att %>
               </td>
               
               <!-- 出社、退社 -->
@@ -54,6 +50,7 @@
           <% end %>
         <% end %>
       </tbody>
+      
     </table>
   </div>
 

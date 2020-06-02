@@ -195,7 +195,13 @@
               <%= f.hidden_field :r_approval, :value => "申請中" %>
               
               <div class="dropdown_menu">
-                <%= f.select :r_request, ['','上長A','上長B'], {} %><br>
+                <% if @user.name == "上長A" %>
+                  <%= f.select :r_request, ['', '上長B'], {} %>
+                <% elsif @user.name == "上長B" %>
+                  <%= f.select :r_request, ['', '上長A'], {} %>
+                <% else %>
+                  <%= f.select :r_request, ['', '上長A', '上長B'], {} %>
+                <% end %>
               </div>
               <%= f.submit "申請", class: "btn btn-primary w-100px" %>
             <% end %>

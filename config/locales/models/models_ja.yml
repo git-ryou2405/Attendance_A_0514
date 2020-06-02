@@ -34,3 +34,5 @@ ja:
           base_no: 拠点番号
           base_name: 拠点名
           attendance_type: 勤怠種類
+        report:
+          r_request: 申請先
