@@ -3,6 +3,10 @@
 
 /* universal */
 
+.btn-block {
+  margin: 15px;
+}
+
 body {
   padding-top: 60px;
 }
@@ -101,4 +105,10 @@ p {
 
 .modal-dialog-center {
   padding-top: 10%;
+}
+
+/* テーブルの位置調整 */
+
+.table td.center {
+  vertical-align: middle;
 }

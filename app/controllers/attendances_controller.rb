@@ -95,7 +95,7 @@ class AttendancesController < ApplicationController
       end
     end
     unless @count.sum == 0
-      flash[:success] = "#{@count.sum}件の残業申請を更新しました。（なし：#{@count[0]}件、承諾：#{@count[1]}件、否認：#{@count[2]}件）"
+      flash[:success] = "#{@count.sum}件の申請を更新しました。（なし：#{@count[0]}件、承諾：#{@count[1]}件、否認：#{@count[2]}件）"
     else
       flash[:warning] = "変更にチェックが無かった為、中止しました。"
     end
@@ -117,7 +117,7 @@ class AttendancesController < ApplicationController
       params.require(:user).permit(attendances: [:end_time, :overtime, :nextday, :business_process, :o_request])[:attendances]
     end
 
-    # 残業時間申請の承認を扱います。
+    # 通知のあった残業時間申請の承認を扱います。
     def notice_overtime_params
       params.require(:user).permit(attendances: [:o_approval, :change])[:attendances]
     end

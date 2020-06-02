@@ -1,9 +1,9 @@
-<% provide(:title, @user.name) %>
+<% aaa = 0 %><% provide(:title, @user.name) %>
 <div>
   <!--ユーザー情報テーブル-->
   <table class="table table-bordered table-condensed user-table">
     <tr>
-      <td>
+      <td class="center">
         <% if current_user?(@user) %>
         <%= link_to "⇦", user_path(date: @first_day.prev_month), class: "btn btn-sm btn-primary" %>
         <% end %>
@@ -16,8 +16,8 @@
         指定勤務開始時間：<%= format_basic_info(@user.designated_work_start_time) %><br>
         指定勤務終了時間：<%= format_basic_info(@user.designated_work_end_time) %>
       </td>
-      <td colspan="3">基本勤務時間：<%= format_basic_info(@user.basic_work_time) %></td>
-      <td>初日：<%= l(@first_day, format: :short) %></td>
+      <td colspan="3" class="center">基本勤務時間：<%= format_basic_info(@user.basic_work_time) %></td>
+      <td class="center">初日：<%= l(@first_day, format: :short) %></td>
     </tr>
 
     <tr>
@@ -33,7 +33,7 @@
 
   <% if @user.superior? && current_user?(@user) %>
     <% if @r_count >= 1 %>
-      <%= link_to "【所属長承認申請のお知らせ】", "#", remote: true, style:"color:#f00" %>
+      <%= link_to "【所属長承認申請のお知らせ】", reports_notice_report_user_path, remote: true, style:"color:#f00" %>
       <span class="box1"><%= "#{@r_count}件の通知があります" %></span><br>
     <% else %>
       <%= "【所属長承認申請のお知らせ】" %><br>
@@ -157,13 +157,13 @@
           <td>
             <% case oneday.o_approval %>
               <% when 'なし' then %>
-                <%= "申請が取消されました。" %>
+                <%= "残業なし" %>
               <% when '申請中' then %>
                 <%= "#{oneday.o_request}へ残業申請中" %>
               <% when '承認' then %>
-                <%= "申請が承認されました。" %>
+                <%= "残業承認済" %>
               <% when '否認' then %>
-                <%= "申請が否認されました。" %>
+                <%= "残業否認" %>
             <% end %>
           </td>
         </tr>
@@ -178,23 +178,30 @@
         <td colspan="6"></td>
         <td colspan="1">在社時間合計</td>
         <td colspan="5"></td>
+        
         <td rowspan="2">
-          <% @req_month = Request.where(r_month: @first_day.month, user_id: @user).first %>
-          <span class="approval"><%= "所属長承認" %></span><br>
-          <% if @req_month.r_approval.nil? %>
-            <%= "未申請" %><br>
-          <% else %>
-            <%= "#{@req_month.r_request} [#{@req_month.r_approval}]" %><br>
+          <% if current_user?(@user) %>
+            <span class="approval"><%= "所属長承認" %></span><br>
+            
+            <% @report_month = Report.where(r_month: @first_day.month, user_id: @user).first %>
+            <% if @report_month.present? %>
+              <%= "#{@report_month.r_request} [#{@report_month.r_approval}]" %><br>
+            <% else %>
+              <%= "未申請" %><br>
+            <% end %>
+            
+            <%= form_with(model: @reports, url: user_reports_path(@user), local: true, method: :post) do |f| %>
+              <%= f.hidden_field :first_day, :value => @first_day %>
+              <%= f.hidden_field :r_approval, :value => "申請中" %>
+              
+              <div class="dropdown_menu">
+                <%= f.select :r_request, ['','上長A','上長B'], {} %><br>
+              </div>
+              <%= f.submit "申請", class: "btn btn-primary w-100px" %>
+            <% end %>
           <% end %>
-          
-          <%= form_with(model: @requests, url: user_request_path(@user, month: @first_day.month), local: true, method: :patch) do |f| %>
-            <div class="dropdown_menu">
-              <%= f.select :r_request, ['','上長A','上長B'], {} %><br>
-            </div>
-            <%= f.submit "申請", class: "btn btn-primary w-100px" %>
-          <% end %>
-          
         </td>
+        
       </tr>
       <tr>
         <td colspan="2"><%= @attendances.count %></td>
@@ -206,7 +213,7 @@
   </table>
   
   <div class="center">
-    <%= link_to "↑", @user, class: "btn btn-default" %>
+    <%= link_to "↑", user_path(date: @first_day), class: "btn btn-default" %>
     <% if @user.admin? %>
       <%= link_to "ユーザ一覧へ", users_path, class: "btn btn-default" %>
     <% end %>
@@ -219,6 +226,7 @@
 <div id="req_overtime" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>
 
 <!--[所属長承認申請のお知らせ表示]-->
+<div id="notice_report" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>
 
 <!--[勤怠変更申請のお知らせ表示]-->
 

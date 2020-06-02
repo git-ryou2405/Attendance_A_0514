@@ -24,11 +24,13 @@ Rails.application.routes.draw do
         patch 'attendances/update_overtime'
         get 'attendances/notice_overtime'
         patch 'attendances/update_notice_overtime'
+        get 'reports/notice_report'
+        patch 'reports/update_report'
         
       end
       collection {post :import}
       resources :attendances, only: :update
-      resources :requests, only: :update
+      resources :reports, only: :create
     end
     resources :bases do
     end

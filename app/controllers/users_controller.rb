@@ -6,7 +6,6 @@ class UsersController < ApplicationController
   before_action :set_one_month, only: :show
   before_action :correct_user_or_admin, only: :show
   before_action :show_admin_check, only: :show
-  before_action :set_year_date, only: :show
 
   def index
     @users = query.paginate(page: params[:page], per_page: 20)
@@ -16,7 +15,7 @@ class UsersController < ApplicationController
   def show
     @users = User.all
     @worked_sum = @attendances.where.not(started_at: nil).count
-    @r_count = 0
+    @r_count = Report.where(r_request: @user.name, r_approval: "申請中").count
     @a_count = 0
     @o_count = Attendance.where(o_request: @user.name, o_approval: "申請中").count
   end

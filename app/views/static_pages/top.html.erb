@@ -2,7 +2,7 @@
 <div class="center jumbotron">
   <h1>勤怠システム</h1>
   <% if logged_in? %>
-    <%= link_to "ログアウト", logout_path, method: :delete, class: "btn btn-lg btn-primary" %>
+  <%= submit_tag "ログイン状態です", name: nil, class: "btn btn-primary btn-block", disabled:"disabled" %>
   <% else %>
     <%= link_to "ログイン", login_path, class: "btn btn-lg btn-primary" %>
   <% end %>

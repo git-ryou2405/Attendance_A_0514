@@ -1,65 +1,64 @@
 <% provide(:title, @user.name) %>
 <div class="modal-dialog modal-lg modal-dialog-center">
   <div class="modal-content">
-  <div class="modal-header" style="border:none">
-      <!--×マーク-->
+    <!--×マーク-->
+    <div class="modal-header" style="border:none">
       <button type="button" class="close" data-dismiss="modal" aria-label="Close">
         <span aria-hidden="true">&times;</span>
       </button>
     </div>
     
     <div class="modal-body">
-    <h4 class="modal-title" style="text-align:center">【残業申請】</h4>
-    <%= form_with(model: @user, url: attendances_update_overtime_user_path, local: true, method: :patch) do |f| %>
-
-      <div class="row">
-        <div class="col-md-10 col-md-offset-1">
-          <table class="table table-bordered table-striped table-position">
-            <thead>
-              <tr>
-                <th><%= Attendance.human_attribute_name :worked_on %></th>
-                <th><%= I18n.t('day_name') %></th>
-                <th><%= "終了予定時刻" %></th>
-                <th><%= "翌日" %></th>
-                <th><%= "業務処理内容" %></th>
-                <th><%= "指示書確認㊞" %></th>
-              </tr>
-            </thead>
-
-            <tbody>
-              <%= f.fields_for "attendances[]", @att_id do |attendance| %>
+      <%= form_with(model: @user, url: attendances_update_overtime_user_path, local: true, method: :patch) do |f| %>
+        <div class="row">
+          <div class="col-md-10 col-md-offset-1">
+            <h4 class="modal-title" style="text-align:center">【残業申請】</h4>
+            <table class="table table-bordered table-striped table-position">
+              <thead>
                 <tr>
-                  <td><%= l(@att_id.worked_on, format: :short) %></td>
-                  <td>
-                    <!-- 曜日 -->
-                    <%= render 'shared/day_of_week', object: @oneday = @att_id %>
-                  </td>
-                  <td><%= attendance.time_select :end_time, :minute_step => 15 %></td>
-                  <td><%= attendance.check_box :nextday %></td>
-                  <td><%= attendance.text_field :business_process %></td>
-                  <td>
-                    <div class="dropdown_menu">
-                      <% if @user.name == "上長A" %>
-                        <%= attendance.select :o_request, ['', '上長B'], {} %>
-                      <% elsif @user.name == "上長B" %>
-                        <%= attendance.select :o_request, ['', '上長A'], {} %>
-                      <% else %>
-                        <%= attendance.select :o_request, ['', '上長A', '上長B'], {} %>
-                      <% end %>
-                    </div>
-                  </td>
+                  <th><%= Attendance.human_attribute_name :worked_on %></th>
+                  <th><%= I18n.t('day_name') %></th>
+                  <th><%= "終了予定時刻" %></th>
+                  <th><%= "翌日" %></th>
+                  <th><%= "業務処理内容" %></th>
+                  <th><%= "指示書確認㊞" %></th>
                 </tr>
-              <% end %>
-            </tbody>
-          </table>
-          
-          <div class="center">
-            <%= f.submit "申請する", class: "btn btn-md btn-primary" %>
+              </thead>
+  
+              <tbody>
+                <%= f.fields_for "attendances[]", @att_id do |attendance| %>
+                  <tr>
+                    <td class="center"><%= l(@att_id.worked_on, format: :short) %></td>
+                    <td class="center">
+                      <!-- 曜日 -->
+                      <%= render 'shared/day_of_week', object: @oneday = @att_id %>
+                    </td>
+                    <td class="center"><%= attendance.time_select :end_time, :minute_step => 15 %></td>
+                    <td class="center"><%= attendance.check_box :nextday %></td>
+                    <td class="center"><%= attendance.text_field :business_process %></td>
+                    <td>
+                      <div class="dropdown_menu">
+                        <% if @user.name == "上長A" %>
+                          <%= attendance.select :o_request, ['', '上長B'], {} %>
+                        <% elsif @user.name == "上長B" %>
+                          <%= attendance.select :o_request, ['', '上長A'], {} %>
+                        <% else %>
+                          <%= attendance.select :o_request, ['', '上長A', '上長B'], {} %>
+                        <% end %>
+                      </div>
+                    </td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+            
+            <div class="center">
+              <%= f.submit "申請する", class: "btn btn-md btn-primary" %>
+            </div>
+            
           </div>
-          
         </div>
-      </div>
-    <% end %>
+      <% end %>
     </div>
   </div>
 </div>
