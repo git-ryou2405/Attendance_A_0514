@@ -1,0 +1,109 @@
+<% aaa = 0 %><% provide(:title, @user.name) %>
+<div class="modal-dialog modal-lg modal-dialog-center">
+  <div class="modal-content">
+    <!--×マーク-->
+    <div class="modal-header" style="border:none">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="row">
+        <div class="col-md-10 col-md-offset-1">
+          
+          <%= form_with(model: @user, url: attendances_update_notice_change_at_user_path, local: true, method: :patch) do |f| %>
+            <% @notice_user.each do |notice_user| %>
+              <h4 class="modal-title" style="text-align:center"><%= "【#{notice_user.name}からの勤怠変更申請】" %></h4>
+              <table class="table table-bordered table-striped table-position">
+                <thead>
+                  <tr>
+                    <th rowspan="3">日付</th>
+                    <th rowspan="3">曜日</th>
+                    <th colspan="4">変更前</th>
+                    <th colspan="4">変更後</th>
+                    <th rowspan="3">備考</th>
+                    <th rowspan="3">指示者確認㊞</th>
+                    <th rowspan="3">変更</th>
+                    <th rowspan="3">勤怠を確認する</th>
+                  </tr>
+                  <tr>
+                    <th colspan="2">出社</th>
+                    <th colspan="2">退社</th>
+                    <th colspan="2">出社</th>
+                    <th colspan="2">退社</th>
+                  </tr>
+                  <tr>
+                    <th colspan="1">時</th>
+                    <th colspan="1">分</th>
+                    <th colspan="1">時</th>
+                    <th colspan="1">分</th>
+                    <th colspan="1">時</th>
+                    <th colspan="1">分</th>
+                    <th colspan="1">時</th>
+                    <th colspan="1">分</th>
+                  </tr>
+                </thead>
+                
+                <% @attendance_lists.where(user_id: notice_user.id).each do |ats| %>
+                  <%= f.fields_for "attendances[]", ats do |at| %>
+<!--debugger-->
+  <% if aaa == 1 %>
+    <% binding.pry %>
+    <% aaa = 1 %>
+  <% end %>
+<!--debugger-->
+                  <tbody>
+                    <tr>
+                      <!-- 日付 -->
+                      <td class="center"><%= l(ats.worked_on, format: :short) %></td>
+                      <!-- 曜日 -->
+                      <td class="center"><%= render 'shared/day_of_week', object: @oneday = ats %></td>
+                      <% unless ats.started_at.nil? %>
+                        <!-- 変更前 出社時間 -->
+                        <td class="center"><%= ats.started_at.hour %></td>
+                        <td class="center"><%= ats.started_at.min %></td>
+                        <!-- 変更前 退社時間 -->
+                        <td class="center"><%= ats.finished_at.hour %></td>
+                        <td class="center"><%= ats.finished_at.min %></td>
+                      <% else %>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                      <% end %>
+                      <!-- 変更後 出社時間 -->
+                      <td class="center"><%= ats.c_started_at.hour %></td>
+                      <td class="center"><%= ats.c_started_at.min %></td>
+                      <!-- 変更後 退社時間 -->
+                      <td class="center"><%= ats.c_finished_at.hour %></td>
+                      <td class="center"><%= ats.c_finished_at.min %></td>
+                      <!-- 備考 -->
+                      <td class="center"><%= ats.note %></td>
+                      <!-- 指示者確認㊞ -->
+                      <td class="dropdown_menu">
+                        <%= at.select :c_approval, ['', 'なし', '申請中', '承認', '否認'], {} %>
+                      </td>
+                      <!-- 変更 -->
+                      <td class="center"><%= at.check_box :change, {:checked => false} %></td>
+                      <!-- 勤怠の確認 -->
+                      <td class="center">
+                        <%= link_to "確認", user_path(notice_user.id), :target=>["_new"], class: "btn btn-sm btn-primary" %>
+                      </td>
+                    </tr>
+                  </tbody>
+                  <% end %>
+                <% end %>
+                
+              </table>
+            <% end %>
+            
+          <div class="center">
+            <%= link_to "キャンセル", user_url(@user), class: "btn btn-md btn-default" %>
+            <%= f.submit "変更を送信する", class: "btn btn-md btn-primary" %>
+          </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

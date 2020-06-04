@@ -20,16 +20,17 @@ ActiveRecord::Schema.define(version: 20200602072723) do
     t.integer "user_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "c_approval"
+    t.string "c_request"
+    t.datetime "c_started_at"
+    t.datetime "c_finished_at"
+    t.boolean "c_nextday", default: false
     t.string "o_approval"
     t.string "o_request"
+    t.boolean "o_nextday", default: false
     t.datetime "end_time"
     t.float "overtime"
     t.string "business_process"
-    t.boolean "nextday", default: false
-    t.string "c_approval"
-    t.string "c_request"
-    t.datetime "af_office"
-    t.datetime "af_leave"
     t.boolean "change", default: false
     t.index ["user_id"], name: "index_attendances_on_user_id"
   end
@@ -62,13 +63,13 @@ ActiveRecord::Schema.define(version: 20200602072723) do
     t.string "remember_digest"
     t.boolean "admin", default: false
     t.string "affiliation"
-    t.datetime "basic_work_time", default: "2020-06-01 23:00:00"
-    t.datetime "designated_work_start_time", default: "2020-06-02 00:00:00"
-    t.datetime "designated_work_end_time", default: "2020-06-02 08:30:00"
+    t.datetime "basic_work_time", default: "2020-06-03 23:00:00"
+    t.datetime "designated_work_start_time", default: "2020-06-04 00:00:00"
+    t.datetime "designated_work_end_time", default: "2020-06-04 08:30:00"
     t.integer "employee_number"
     t.string "uid"
     t.boolean "superior", default: false
-    t.datetime "work_time", default: "2020-06-01 22:30:00"
+    t.datetime "work_time", default: "2020-06-03 22:30:00"
     t.index ["email"], name: "index_users_on_email", unique: true
   end
 

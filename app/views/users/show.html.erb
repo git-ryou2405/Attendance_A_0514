@@ -1,6 +1,7 @@
-<% aaa = 0 %><% provide(:title, @user.name) %>
+<% provide(:title, @user.name) %>
+
+<!--ユーザー情報テーブル-->
 <div>
-  <!--ユーザー情報テーブル-->
   <table class="table table-bordered table-condensed user-table">
     <tr>
       <td class="center">
@@ -31,6 +32,8 @@
   </table>
 </div>
 
+<!--各種 申請お知らせテーブル-->
+<div>
   <% if @user.superior? && current_user?(@user) %>
     <% if @r_count >= 1 %>
       <%= link_to "【所属長承認申請のお知らせ】", reports_notice_report_user_path, remote: true, style:"color:#f00" %>
@@ -40,7 +43,7 @@
     <% end %>
     
     <% if @a_count >= 1 %>
-      <%= link_to "【勤怠変更申請のお知らせ】", "#", remote: true, style:"color:#f00" %>
+      <%= link_to "【勤怠変更申請のお知らせ】", attendances_notice_change_at_user_path, remote: true, style:"color:#f00" %>
       <span class="box1"><%= "#{@a_count}件の通知があります" %></span><br>
     <% else %>
       <%= "【勤怠変更申請のお知らせ】" %><br>
@@ -53,15 +56,22 @@
       <%= "【残業申請のお知らせ】" %><br>
     <% end %>
   <% end %>
-  
+</div>
+
+<!--各種 新規３ボタン-->
 <div class="btn-users-show">
   <% if current_user?(@user) %>
-    <%= link_to "勤怠を編集", attendances_edit_one_month_user_path(date: @first_day), class: "btn btn-primary" %>
-    <%= link_to "CSV出力", '#', class: "btn btn-primary" %><br>
-    <%= link_to "勤怠修正ログ", '#', class: "btn btn-primary" %>
+    <span class="m5px">
+      <%= link_to "勤怠を編集", attendances_edit_one_month_user_path(date: @first_day), class: "btn btn-primary" %>
+    </span>
+    <span><%= link_to "CSV出力", '#', class: "btn btn-primary" %><br></span>
+    <div class="m5px">
+      <%= link_to "勤怠修正ログ", '#', class: "btn btn-primary" %>
+    </div>
   <% end %>
 </div>
 
+<!--勤怠テーブル-->
 <div>
   <table class="table table-bordered table-striped table-condensed table-hover" id="table-attendances">
     <thead>
@@ -97,30 +107,36 @@
     <tbody>
       <% @attendances.each do |oneday| %>
         <tr>
-          <td><!-- 残業申請 -->
+          <!-- 残業申請ボタン -->
+          <td>
             <% if current_user?(@user) %>
               <%= link_to "残業申請", attendances_req_overtime_user_path(params: { att_id: oneday }), remote: true, class: "btn btn-primary" %>
             <% end %>
           </td>
-          <td><!-- 日付 --><%= l(oneday.worked_on, format: :short) %></td>
-          <td>
-            <!-- 曜日 -->
-            <%= render 'shared/day_of_week', object: @oneday = oneday %>
-          </td>
+          
+          <!-- 日付 -->
+          <td><%= l(oneday.worked_on, format: :short) %></td>
+          
+          <!-- 曜日 -->
+          <td><%= render 'shared/day_of_week', object: @oneday = oneday %></td>
+          
           <!-- 出社：時、分 -->
           <td><%= l(oneday.started_at.floor_to(15.minutes), format: :hour) if oneday.started_at.present? %></td>
           <td><%= l(oneday.started_at.floor_to(15.minutes), format: :minute) if oneday.started_at.present? %></td>
+          
+          <!-- 出社ボタン -->
           <td>
-            <!-- 出社ボタン -->
             <% if btn_text = attendance_state(oneday) %>
               <% if oneday.started_at.nil? && current_user?(@user) %>
                 <%= link_to "#{btn_text}", user_attendance_path(@user, oneday), method: :patch, class: "btn btn-primary btn-attendance" %>
               <% end %>
             <% end %>
           </td>
+          
           <!-- 退社：時、分 -->
           <td><%= l(oneday.finished_at.floor_to(15.minutes), format: :hour) if oneday.finished_at.present? %></td>
           <td><%= l(oneday.finished_at.floor_to(15.minutes), format: :minute) if oneday.finished_at.present? %></td>
+          
           <!-- 退社ボタン -->
           <td>
             <% if btn_text = attendance_state(oneday) %>
@@ -129,13 +145,16 @@
               <% end %>
             <% end %>
           </td>
+          
           <!-- 在社時間 -->
           <td>
             <% if oneday.started_at.present? && oneday.finished_at.present? %>
-              <%= str_times = working_times(oneday.started_at.floor_to(15.minutes), oneday.finished_at.floor_to(15.minutes)) %>
+              <% str_times = working_times_check_nextday(oneday) %>
+              <%= str_times + " h" %>
               <% @total_working_times = @total_working_times.to_f + str_times.to_f %>
             <% end %>
           </td>
+          
           <!-- 備考 -->
           <td><%= oneday.note %></td>
           
@@ -143,35 +162,53 @@
           <% if oneday.end_time.present? && !oneday.o_request.nil? %>
             <td><%= oneday.end_time.hour %></td>
             <td><%= oneday.end_time.min %></td>
-            <td><%= "#{oneday.overtime} h" %></td>
+            <td>
+              <% if oneday.overtime < 0 %>
+                <%= "0 h" %>
+              <% else %>
+                <%= "#{oneday.overtime} h" %>
+              <% end %>
+            </td>
           <% else %>
             <td></td>
             <td></td>
             <td></td>
           <% end %>
           
-          <!-- 業務処理内容-->
+          <!-- 業務処理内容 -->
           <td><%= oneday.business_process %></td>
           
-          <!-- 指示書確認-->
+          <!-- 指示書確認㊞ -->
           <td>
+            <div class="text-left">
             <% case oneday.o_approval %>
               <% when 'なし' then %>
-                <%= "残業なし" %>
+                <%= "" %>
               <% when '申請中' then %>
-                <%= "#{oneday.o_request}へ残業申請中" %>
+                <%= "・#{oneday.o_request}へ残業申請中" %><br>
               <% when '承認' then %>
-                <%= "残業承認済" %>
+                <%= "○ 残業承認済" %><br>
               <% when '否認' then %>
-                <%= "残業否認" %>
+                <%= "× 残業否認" %><br>
             <% end %>
+            <% case oneday.c_approval %>
+              <% when 'なし' then %>
+                <%= "" %>
+              <% when '申請中' then %>
+                <%= "・#{oneday.c_request}へ勤怠変更申請中" %>
+              <% when '承認' then %>
+                <%= "○ 勤怠変更承認済" %>
+              <% when '否認' then %>
+                <%= "× 勤怠変更否認" %>
+            <% end %>
+            </div>
           </td>
         </tr>
       <% end %>
     </tbody>
     
+    <!--rowspan:縦結合、colspan：横結合-->
     <tfoot>
-      <!--rowspan:縦結合、colspan：横結合-->
       <tr>
         <td rowspan="2"></td>
         <td colspan="2">累計日数</td>
@@ -194,20 +231,19 @@
               <%= f.hidden_field :first_day, :value => @first_day %>
               <%= f.hidden_field :r_approval, :value => "申請中" %>
               
-              <div class="dropdown_menu">
+              <div class="dropdown_menu2">
                 <% if @user.name == "上長A" %>
-                  <%= f.select :r_request, ['', '上長B'], {} %>
+                  <%= f.select :r_request, ['', '上長B', 'テスト1'], {:selected =>''} %>
                 <% elsif @user.name == "上長B" %>
-                  <%= f.select :r_request, ['', '上長A'], {} %>
+                  <%= f.select :r_request, ['', '上長A', 'テスト1'], {:selected =>''} %>
                 <% else %>
-                  <%= f.select :r_request, ['', '上長A', '上長B'], {} %>
+                  <%= f.select :r_request, ['', '上長A', '上長B', 'テスト1'], {:selected =>''} %>
                 <% end %>
               </div>
               <%= f.submit "申請", class: "btn btn-primary w-100px" %>
             <% end %>
           <% end %>
         </td>
-        
       </tr>
       <tr>
         <td colspan="2"><%= @attendances.count %></td>
@@ -226,15 +262,17 @@
   </div>
 </div>
 
-
 <!--モーダルウインドウ表示-->
-<!--[残業申請モーダル表示]-->
-<div id="req_overtime" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>
-
-<!--[所属長承認申請のお知らせ表示]-->
-<div id="notice_report" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>
-
-<!--[勤怠変更申請のお知らせ表示]-->
-
-<!--[残業申請のお知らせ表示]-->
-<div id="notice_overtime" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>
+<div>
+  <!--[残業申請モーダル表示]-->
+  <div id="req_overtime" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>
+  
+  <!--[所属長承認申請のお知らせ表示]-->
+  <div id="notice_report" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>
+  
+  <!--[勤怠変更申請のお知らせ表示]-->
+  <div id="notice_change_at" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>
+  
+  <!--[残業申請のお知らせ表示]-->
+  <div id="notice_overtime" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>
+</div>

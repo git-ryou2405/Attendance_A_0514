@@ -24,6 +24,8 @@ Rails.application.routes.draw do
         patch 'attendances/update_overtime'
         get 'attendances/notice_overtime'
         patch 'attendances/update_notice_overtime'
+        get 'attendances/notice_change_at'
+        patch 'attendances/update_notice_change_at'
         get 'reports/notice_report'
         patch 'reports/update_report'
         

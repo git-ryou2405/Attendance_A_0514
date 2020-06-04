@@ -20,16 +20,21 @@ ja:
           updated_at: 更新日
         attendance:
           worked_on: 日付
-          started_at: 出社
-          finished_at: 退社
+          started_at: 出社時間
+          finished_at: 退社時間
           end_time: 終了予定時刻
-          nextday: 翌日
+          overtime: 時間外残業
           business_process: 業務処理内容
+          c_nextday: 翌日
+          o_nextday: 翌日
+          c_approval: 指示者確認㊞
           o_approval: 指示者確認㊞
+          c_request: 申請者
           o_request: 申請者
           change: 変更
           note: 備考
           user: ユーザーID
+          company_time: 在社時間
         base:
           base_no: 拠点番号
           base_name: 拠点名

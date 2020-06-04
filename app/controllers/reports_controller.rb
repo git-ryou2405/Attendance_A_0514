@@ -26,7 +26,7 @@ class ReportsController < ApplicationController
   end
   
   def notice_report
-    @notice_user = User.where(id: Report.where(r_approval: "申請中").select(:user_id))
+    @notice_user = User.where(id: Report.where(r_request: @user.name, r_approval: "申請中").select(:user_id))
     @report_lists = Report.where(r_request: @user.name, r_approval: "申請中")
   end
   

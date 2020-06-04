@@ -7,11 +7,11 @@
         <span aria-hidden="true">&times;</span>
       </button>
     </div>
-    
     <div class="modal-body">
-      <%= form_with(model: @user, url: attendances_update_overtime_user_path, local: true, method: :patch) do |f| %>
-        <div class="row">
-          <div class="col-md-10 col-md-offset-1">
+      <div class="row">
+        <div class="col-md-10 col-md-offset-1">
+          
+          <%= form_with(model: @user, url: attendances_update_overtime_user_path, local: true, method: :patch) do |f| %>
             <h4 class="modal-title" style="text-align:center">【残業申請】</h4>
             <table class="table table-bordered table-striped table-position">
               <thead>
@@ -24,41 +24,43 @@
                   <th><%= "指示書確認㊞" %></th>
                 </tr>
               </thead>
-  
-              <tbody>
-                <%= f.fields_for "attendances[]", @att_id do |attendance| %>
+              
+              <%= f.fields_for "attendances[]", @att_id do |attendance| %>
+                <tbody>
                   <tr>
+                    <!-- 日付 -->
                     <td class="center"><%= l(@att_id.worked_on, format: :short) %></td>
+                    <!-- 曜日 -->
                     <td class="center">
-                      <!-- 曜日 -->
                       <%= render 'shared/day_of_week', object: @oneday = @att_id %>
                     </td>
+                    <!-- 終了予定時刻 -->
                     <td class="center"><%= attendance.time_select :end_time, :minute_step => 15 %></td>
-                    <td class="center"><%= attendance.check_box :nextday %></td>
+                    <!-- 翌日 -->
+                    <td class="center"><%= attendance.check_box :o_nextday, {:checked => false} %></td>
+                    <!-- 業務処理内容 -->
                     <td class="center"><%= attendance.text_field :business_process %></td>
-                    <td>
-                      <div class="dropdown_menu">
-                        <% if @user.name == "上長A" %>
-                          <%= attendance.select :o_request, ['', '上長B'], {} %>
-                        <% elsif @user.name == "上長B" %>
-                          <%= attendance.select :o_request, ['', '上長A'], {} %>
-                        <% else %>
-                          <%= attendance.select :o_request, ['', '上長A', '上長B'], {} %>
-                        <% end %>
-                      </div>
+                    <!-- 指示者確認㊞ -->
+                    <td class="dropdown_menu">
+                      <% if @user.name == "上長A" %>
+                        <%= attendance.select :o_request, ['', '上長B', 'テスト1'], {:selected =>''} %>
+                      <% elsif @user.name == "上長B" %>
+                        <%= attendance.select :o_request, ['', '上長A', 'テスト1'], {:selected =>''} %>
+                      <% else %>
+                        <%= attendance.select :o_request, ['', '上長A', '上長B', 'テスト1'], {:selected =>''} %>
+                      <% end %>
                     </td>
                   </tr>
-                <% end %>
-              </tbody>
+                </tbody>
+              <% end %>
             </table>
-            
+          
             <div class="center">
               <%= f.submit "申請する", class: "btn btn-md btn-primary" %>
             </div>
-            
-          </div>
+          <% end %>
         </div>
-      <% end %>
+      </div>
     </div>
   </div>
 </div>

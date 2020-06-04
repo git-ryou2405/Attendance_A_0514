@@ -16,7 +16,7 @@ class UsersController < ApplicationController
     @users = User.all
     @worked_sum = @attendances.where.not(started_at: nil).count
     @r_count = Report.where(r_request: @user.name, r_approval: "申請中").count
-    @a_count = 0
+    @a_count = Attendance.where(c_request: @user.name, c_approval: "申請中").count
     @o_count = Attendance.where(o_request: @user.name, o_approval: "申請中").count
   end
 
@@ -41,8 +41,9 @@ class UsersController < ApplicationController
   def update
     if @user.update_attributes(user_params)
       flash[:success] = "ユーザー情報を更新しました。"
-      redirect_to users_url
+      redirect_to edit_user_url
     else
+      flash[:danger] = "#{@user.name}の更新は失敗しました。<br><li>" + @user.errors.full_messages.join("</li><li>")
       render :edit
     end
   end
