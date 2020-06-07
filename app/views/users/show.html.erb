@@ -1,8 +1,7 @@
 <% provide(:title, @user.name) %>
-
 <!--ユーザー情報テーブル-->
 <div>
-  <table class="table table-bordered table-condensed user-table">
+  <table class="table table-bordered table-striped table-condensed user-table">
     <tr>
       <td class="center">
         <% if current_user?(@user) %>
@@ -66,213 +65,212 @@
     </span>
     <span><%= link_to "CSV出力", '#', class: "btn btn-primary" %><br></span>
     <div class="m5px">
-      <%= link_to "勤怠修正ログ", '#', class: "btn btn-primary" %>
+      <%= link_to "勤怠修正ログ", attendance_log_user_path(date: @first_day), class: "btn btn-primary" %>
     </div>
   <% end %>
 </div>
 
 <!--勤怠テーブル-->
-<div>
-  <table class="table table-bordered table-striped table-condensed table-hover" id="table-attendances">
-    <thead>
+<table class="table table-bordered table-striped table-condensed table-hover" id="table-attendances">
+  <thead>
+    <tr>
+      <th rowspan="3">残業申請</th>
+      <th rowspan="3">日付</th>
+      <th rowspan="3">曜日</th>
+      <th colspan="8">【実績】</th>
+      <th colspan="5">所定外勤務</th>
+    </tr>
+    <tr>
+      <th colspan="3">出社</th>
+      <th colspan="3">退社</th>
+      <th rowspan="2">在社時間</th>
+      <th rowspan="2">備考</th>
+      <th colspan="2">終了予定時間</th>
+      <th rowspan="2">時間外残業</th>
+      <th rowspan="2">業務処理内容</th>
+      <th rowspan="2">指示書確認㊞</th>
+    </tr>
+    <tr>
+      <th>時</th>
+      <th>分</th>
+      <th></th>
+      <th>時</th>
+      <th>分</th>
+      <th></th>
+      <th>時</th>
+      <th>分</th>
+    </tr>
+  </thead>
+  
+  <tbody>
+    <% @attendances.each do |oneday| %>
       <tr>
-        <th rowspan="3">残業申請</th>
-        <th rowspan="3">日付</th>
-        <th rowspan="3">曜日</th>
-        <th colspan="8">【実績】</th>
-        <th colspan="5">所定外勤務</th>
-      </tr>
-      <tr>
-        <th colspan="3">出社</th>
-        <th colspan="3">退社</th>
-        <th rowspan="2">在社時間</th>
-        <th rowspan="2">備考</th>
-        <th colspan="2">終了予定時間</th>
-        <th rowspan="2">時間外残業</th>
-        <th rowspan="2">業務処理内容</th>
-        <th rowspan="2">指示書確認㊞</th>
-      </tr>
-      <tr>
-        <th>時</th>
-        <th>分</th>
-        <th></th>
-        <th>時</th>
-        <th>分</th>
-        <th></th>
-        <th>時</th>
-        <th>分</th>
-      </tr>
-    </thead>
-    
-    <tbody>
-      <% @attendances.each do |oneday| %>
-        <tr>
-          <!-- 残業申請ボタン -->
-          <td>
-            <% if current_user?(@user) %>
-              <%= link_to "残業申請", attendances_req_overtime_user_path(params: { att_id: oneday }), remote: true, class: "btn btn-primary" %>
-            <% end %>
-          </td>
-          
-          <!-- 日付 -->
-          <td><%= l(oneday.worked_on, format: :short) %></td>
-          
-          <!-- 曜日 -->
-          <td><%= render 'shared/day_of_week', object: @oneday = oneday %></td>
-          
-          <!-- 出社：時、分 -->
-          <td><%= l(oneday.started_at.floor_to(15.minutes), format: :hour) if oneday.started_at.present? %></td>
-          <td><%= l(oneday.started_at.floor_to(15.minutes), format: :minute) if oneday.started_at.present? %></td>
-          
-          <!-- 出社ボタン -->
-          <td>
-            <% if btn_text = attendance_state(oneday) %>
-              <% if oneday.started_at.nil? && current_user?(@user) %>
-                <%= link_to "#{btn_text}", user_attendance_path(@user, oneday), method: :patch, class: "btn btn-primary btn-attendance" %>
-              <% end %>
-            <% end %>
-          </td>
-          
-          <!-- 退社：時、分 -->
-          <td><%= l(oneday.finished_at.floor_to(15.minutes), format: :hour) if oneday.finished_at.present? %></td>
-          <td><%= l(oneday.finished_at.floor_to(15.minutes), format: :minute) if oneday.finished_at.present? %></td>
-          
-          <!-- 退社ボタン -->
-          <td>
-            <% if btn_text = attendance_state(oneday) %>
-              <% if oneday.started_at.present? && oneday.finished_at.nil? && current_user?(@user) %>
-                <%= link_to "#{btn_text}", user_attendance_path(@user, oneday), method: :patch, class: "btn btn-primary btn-attendance" %>
-              <% end %>
-            <% end %>
-          </td>
-          
-          <!-- 在社時間 -->
-          <td>
-            <% if oneday.started_at.present? && oneday.finished_at.present? %>
-              <% str_times = working_times_check_nextday(oneday) %>
-              <%= str_times + " h" %>
-              <% @total_working_times = @total_working_times.to_f + str_times.to_f %>
-            <% end %>
-          </td>
-          
-          <!-- 備考 -->
-          <td><%= oneday.note %></td>
-          
-          <!-- 終了予定時間：時、分、 時間外残業 -->
-          <% if oneday.end_time.present? && !oneday.o_request.nil? %>
-            <td><%= oneday.end_time.hour %></td>
-            <td><%= oneday.end_time.min %></td>
-            <td>
-              <% if oneday.overtime < 0 %>
-                <%= "0 h" %>
-              <% else %>
-                <%= "#{oneday.overtime} h" %>
-              <% end %>
-            </td>
-          <% else %>
-            <td></td>
-            <td></td>
-            <td></td>
-          <% end %>
-          
-          <!-- 業務処理内容 -->
-          <td><%= oneday.business_process %></td>
-          
-          <!-- 指示書確認㊞ -->
-          <td>
-            <div class="text-left">
-            <% case oneday.o_approval %>
-              <% when 'なし' then %>
-                <%= "" %>
-              <% when '申請中' then %>
-                <%= "・#{oneday.o_request}へ残業申請中" %><br>
-              <% when '承認' then %>
-                <%= "○ 残業承認済" %><br>
-              <% when '否認' then %>
-                <%= "× 残業否認" %><br>
-            <% end %>
-            <% case oneday.c_approval %>
-              <% when 'なし' then %>
-                <%= "" %>
-              <% when '申請中' then %>
-                <%= "・#{oneday.c_request}へ勤怠変更申請中" %>
-              <% when '承認' then %>
-                <%= "○ 勤怠変更承認済" %>
-              <% when '否認' then %>
-                <%= "× 勤怠変更否認" %>
-            <% end %>
-            </div>
-          </td>
-        </tr>
-      <% end %>
-    </tbody>
-    
-    <!--rowspan:縦結合、colspan：横結合-->
-    <tfoot>
-      <tr>
-        <td rowspan="2"></td>
-        <td colspan="2">累計日数</td>
-        <td colspan="6"></td>
-        <td colspan="1">在社時間合計</td>
-        <td colspan="5"></td>
-        
-        <td rowspan="2">
+        <!-- 残業申請ボタン -->
+        <td>
           <% if current_user?(@user) %>
-            <span class="approval"><%= "所属長承認" %></span><br>
-            
-            <% @report_month = Report.where(r_month: @first_day.month, user_id: @user).first %>
-            <% if @report_month.present? %>
-              <%= "#{@report_month.r_request} [#{@report_month.r_approval}]" %><br>
-            <% else %>
-              <%= "未申請" %><br>
-            <% end %>
-            
-            <%= form_with(model: @reports, url: user_reports_path(@user), local: true, method: :post) do |f| %>
-              <%= f.hidden_field :first_day, :value => @first_day %>
-              <%= f.hidden_field :r_approval, :value => "申請中" %>
-              
-              <div class="dropdown_menu2">
-                <% if @user.name == "上長A" %>
-                  <%= f.select :r_request, ['', '上長B', 'テスト1'], {:selected =>''} %>
-                <% elsif @user.name == "上長B" %>
-                  <%= f.select :r_request, ['', '上長A', 'テスト1'], {:selected =>''} %>
-                <% else %>
-                  <%= f.select :r_request, ['', '上長A', '上長B', 'テスト1'], {:selected =>''} %>
-                <% end %>
-              </div>
-              <%= f.submit "申請", class: "btn btn-primary w-100px" %>
+            <%= link_to "残業申請", attendances_req_overtime_user_path(params: { att_id: oneday }), remote: true, class: "btn btn-primary" %>
+          <% end %>
+        </td>
+        
+        <!-- 日付 -->
+        <td><%= l(oneday.worked_on, format: :short) %></td>
+        
+        <!-- 曜日 -->
+        <td><%= render 'shared/day_of_week', object: @oneday = oneday %></td>
+        
+        <!-- 出社：時、分 -->
+        <td><%= l(oneday.started_at.floor_to(15.minutes), format: :hour) if oneday.started_at.present? %></td>
+        <td><%= l(oneday.started_at.floor_to(15.minutes), format: :minute) if oneday.started_at.present? %></td>
+        
+        <!-- 出社ボタン -->
+        <td>
+          <% if btn_text = attendance_state(oneday) %>
+            <% if oneday.started_at.nil? && current_user?(@user) %>
+              <%= link_to "#{btn_text}", user_attendance_path(@user, oneday), method: :patch, class: "btn btn-primary btn-attendance" %>
             <% end %>
           <% end %>
         </td>
+        
+        <!-- 退社：時、分 -->
+        <td><%= l(oneday.finished_at.floor_to(15.minutes), format: :hour) if oneday.finished_at.present? %></td>
+        <td><%= l(oneday.finished_at.floor_to(15.minutes), format: :minute) if oneday.finished_at.present? %></td>
+        
+        <!-- 退社ボタン -->
+        <td>
+          <% if btn_text = attendance_state(oneday) %>
+            <% if oneday.started_at.present? && oneday.finished_at.nil? && current_user?(@user) %>
+              <%= link_to "#{btn_text}", user_attendance_path(@user, oneday), method: :patch, class: "btn btn-primary btn-attendance" %>
+            <% end %>
+          <% end %>
+        </td>
+        
+        <!-- 在社時間 -->
+        <td>
+          <% if oneday.started_at.present? && oneday.finished_at.present? %>
+            <% str_times = working_times_check_nextday(oneday) %>
+            <%= str_times + " h" %>
+            <% @total_working_times = @total_working_times.to_f + str_times.to_f %>
+          <% end %>
+        </td>
+        
+        <!-- 備考 -->
+        <td><%= oneday.note %></td>
+        
+        <!-- 終了予定時間：時、分、 時間外残業 -->
+        <% if oneday.end_time.present? && !oneday.o_request.nil? %>
+          <td><%= oneday.end_time.hour %></td>
+          <td><%= oneday.end_time.min %></td>
+          <td>
+            <% if oneday.overtime < 0 %>
+              <%= "0 h" %>
+            <% else %>
+              <%= "#{oneday.overtime} h" %>
+            <% end %>
+          </td>
+        <% else %>
+          <td></td>
+          <td></td>
+          <td></td>
+        <% end %>
+        
+        <!-- 業務処理内容 -->
+        <td><%= oneday.business_process %></td>
+        
+        <!-- 指示書確認㊞ -->
+        <td>
+          <div class="text-left">
+          <% case oneday.o_approval %>
+            <% when 'なし' then %>
+              <%= "" %>
+            <% when '申請中' then %>
+              <%= "・#{oneday.o_request}へ残業申請中" %><br>
+            <% when '承認' then %>
+              <%= "○ 残業承認済" %><br>
+            <% when '否認' then %>
+              <%= "× 残業否認" %><br>
+          <% end %>
+          <% case oneday.c_approval %>
+            <% when 'なし' then %>
+              <%= "" %>
+            <% when '申請中' then %>
+              <%= "・#{oneday.c_request}へ勤怠変更申請中" %>
+            <% when '承認' then %>
+              <%= "○ 勤怠変更承認済" %>
+            <% when '否認' then %>
+              <%= "× 勤怠変更否認" %>
+          <% end %>
+          </div>
+        </td>
       </tr>
-      <tr>
-        <td colspan="2"><%= @attendances.count %></td>
-        <td colspan="6"></td>
-        <td colspan="1"><%= format("%.2f", @total_working_times.to_f) %></td>
-        <td colspan="5"></td>
-      </tr>
-    </tfoot>
-  </table>
-  
-  <div class="center">
-    <%= link_to "↑", user_path(date: @first_day), class: "btn btn-default" %>
-    <% if @user.admin? %>
-      <%= link_to "ユーザ一覧へ", users_path, class: "btn btn-default" %>
     <% end %>
-  </div>
+  </tbody>
+  
+  <!--rowspan:縦結合、colspan：横結合-->
+  <tfoot>
+    <tr>
+      <td rowspan="2"></td>
+      <td colspan="2">累計日数</td>
+      <td colspan="6"></td>
+      <td colspan="1">在社時間合計</td>
+      <td colspan="5"></td>
+      
+      <td rowspan="2">
+        <% if current_user?(@user) %>
+          <span class="approval"><%= "所属長承認" %></span><br>
+          
+          <% @report_month = Report.where(r_month: @first_day.month, user_id: @user).first %>
+          <% if @report_month.present? %>
+            <%= "#{@report_month.r_request} [#{@report_month.r_approval}]" %><br>
+          <% else %>
+            <%= "未申請" %><br>
+          <% end %>
+          
+          <%= form_with(model: @reports, url: user_reports_path(@user), local: true, method: :post) do |f| %>
+            <%= f.hidden_field :first_day, :value => @first_day %>
+            <%= f.hidden_field :r_approval, :value => "申請中" %>
+            
+            <div class="dropdown_menu2">
+              <% if @user.name == "上長A" %>
+                <%= f.select :r_request, ['', '上長B', 'テスト1'], {:selected =>''} %>
+              <% elsif @user.name == "上長B" %>
+                <%= f.select :r_request, ['', '上長A', 'テスト1'], {:selected =>''} %>
+              <% else %>
+                <%= f.select :r_request, ['', '上長A', '上長B', 'テスト1'], {:selected =>''} %>
+              <% end %>
+            </div>
+            <%= f.submit "申請", class: "btn btn-primary w-100px" %>
+          <% end %>
+        <% end %>
+      </td>
+    </tr>
+    <tr>
+      <td colspan="2"><%= @attendances.count %></td>
+      <td colspan="6"></td>
+      <td colspan="1"><%= format("%.2f", @total_working_times.to_f) %></td>
+      <td colspan="5"></td>
+    </tr>
+  </tfoot>
+</table>
+
+<!--ボタン-->
+<div class="center">
+  <%= link_to "↑", user_path(date: @first_day), class: "btn btn-default" %>
+  <% if @user.admin? %>
+    <%= link_to "ユーザ一覧へ", users_path, class: "btn btn-default" %>
+  <% end %>
 </div>
 
-<!--モーダルウインドウ表示-->
+<!--モーダルウインドウ-->
 <div>
-  <!--[残業申請モーダル表示]-->
+  <!--[残業申請モーダル]-->
   <div id="req_overtime" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>
   
-  <!--[所属長承認申請のお知らせ表示]-->
+  <!--[所属長承認申請のお知らせ]-->
   <div id="notice_report" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>
   
-  <!--[勤怠変更申請のお知らせ表示]-->
+  <!--[勤怠変更申請のお知らせ]-->
   <div id="notice_change_at" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>
   
-  <!--[残業申請のお知らせ表示]-->
+  <!--[残業申請のお知らせ]-->
   <div id="notice_overtime" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>
 </div>

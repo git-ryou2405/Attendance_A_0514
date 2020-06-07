@@ -13,7 +13,7 @@
           
           <%= form_with(model: @user, url: attendances_update_overtime_user_path, local: true, method: :patch) do |f| %>
             <h4 class="modal-title" style="text-align:center">【残業申請】</h4>
-            <table class="table table-bordered table-striped table-position">
+            <table class="table table-bordered table-striped table-position table-hover">
               <thead>
                 <tr>
                   <th><%= Attendance.human_attribute_name :worked_on %></th>
@@ -35,7 +35,7 @@
                       <%= render 'shared/day_of_week', object: @oneday = @att_id %>
                     </td>
                     <!-- 終了予定時刻 -->
-                    <td class="center"><%= attendance.time_select :end_time, :minute_step => 15 %></td>
+                    <td class="center"><%= attendance.time_select :end_time, {:minute_step => 15} %></td>
                     <!-- 翌日 -->
                     <td class="center"><%= attendance.check_box :o_nextday, {:checked => false} %></td>
                     <!-- 業務処理内容 -->
@@ -53,14 +53,17 @@
                   </tr>
                 </tbody>
               <% end %>
+              
             </table>
-          
+            
+            <!--ボタン-->
             <div class="center">
               <%= f.submit "申請する", class: "btn btn-md btn-primary" %>
             </div>
           <% end %>
         </div>
       </div>
+    </div>
     </div>
   </div>
 </div>

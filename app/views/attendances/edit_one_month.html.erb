@@ -1,72 +1,75 @@
 <% provide(:title, @user.name) %>
 <%= form_with(model: @user, url: attendances_update_one_month_user_path(date: @first_day), local: true, method: :patch) do |f| %>
-<div>
-  <h1>勤怠編集画面</h1>
-    <table class="table table-bordered table-condensed table-hover" id="table-attendances">
-      <thead>
-        <tr>
-          <th>日付</th>
-          <th>曜日</th>
-          <th>出社</th>
-          <th>退社</th>
-          <th>翌日</th>
-          <th>在社時間</th>
-          <th>備考</th>
-          <th>指示者確認㊞</th>
-        </tr>
-      </thead>
-      
-      <tbody>
-        <% @attendances.each do |att| %>
-          <%= f.fields_for "attendances[]", att do |attendance| %>
-          
-            <tr>
-              <!--日付 -->
-              <td><%= l(att.worked_on, format: :short) %></td>
-              <!-- 曜日 -->
-              <td><%= render 'shared/day_of_week', object: @oneday = att %></td>
-              
-              <!-- 出社、退社 （現在日以降は申請不可）-->
-              <% if att.worked_on <= Date.current %>
-                <td><%= attendance.time_field :c_started_at, class: "form-control" %></td>
-                <td><%= attendance.time_field :c_finished_at, class: "form-control" %></td>
-              <% else %>
-                <td><%= attendance.time_field :c_started_at, readonly: true, class: "form-control" %></td>
-                <td><%= attendance.time_field :c_finished_at, readonly: true, class: "form-control" %></td>
+<h1>勤怠編集画面</h1>
+  <table class="table table-bordered table-striped table-condensed table-hover" id="table-attendances">
+    <thead>
+      <tr>
+        <th>日付</th>
+        <th>曜日</th>
+        <th>出社</th>
+        <th>退社</th>
+        <th>翌日</th>
+        <th>在社時間</th>
+        <th>備考</th>
+        <th>指示者確認㊞</th>
+      </tr>
+    </thead>
+    
+    <tbody>
+      <% @attendances.each do |att| %>
+        <%= f.fields_for "attendances[]", att do |attendance| %>
+        
+          <tr>
+            <!--日付 -->
+            <td><%= l(att.worked_on, format: :short) %></td>
+            <!-- 曜日 -->
+            <td><%= render 'shared/day_of_week', object: @oneday = att %></td>
+            
+            <!-- 出社、退社 （現在日以降は申請不可）-->
+            <% if att.worked_on <= Date.current %>
+              <td><%= attendance.time_field :c_af_started_at, class: "form-control" %></td>
+              <td><%= attendance.time_field :c_af_finished_at, class: "form-control" %></td>
+            <% else %>
+              <td><%= attendance.time_field :c_af_started_at, readonly: true, class: "form-control" %></td>
+              <td><%= attendance.time_field :c_af_finished_at, readonly: true, class: "form-control" %></td>
+            <% end %>
+            <!-- 翌日 -->
+            <td><%= attendance.check_box :c_nextday, {} %></td>
+            
+            <!-- 在社時間 -->
+            <td>
+              <% if att.started_at.present? && att.finished_at.present? %>
+                <%= working_times_check_nextday(att) %>
               <% end %>
-              <!-- 翌日 -->
-              <td><%= attendance.check_box :c_nextday, {} %></td>
+            </td>
+            <!-- 備考 -->
+            <td><%= attendance.text_field :note, class: "form-control" %></td>
+            
+            <!-- 指示者確認㊞ -->
+            <td class="dropdown_menu">
+              <% if @user.name == "上長A" %>
+                <% @array = ['', '上長B', 'テスト1'] %>
+              <% elsif @user.name == "上長B" %>
+                <% @array = ['', '上長A', 'テスト1'] %>
+              <% else %>
+                <% @array = ['', '上長A', '上長B', 'テスト1'] %>
+              <% end %>
               
-              <!-- 在社時間 -->
-              <td>
-                <% if att.started_at.present? && att.finished_at.present? %>
-                  <%= working_times_check_nextday(att) %>
-                <% end %>
-              </td>
-              <!-- 備考 -->
-              <td><%= attendance.text_field :note, class: "form-control" %></td>
-              
-              <!-- 指示者確認㊞ -->
-              <td class="dropdown_menu">
-                <% if @user.name == "上長A" %>
-                  <%= attendance.select :c_request, ['', '上長B', 'テスト1'], {} %>
-                <% elsif @user.name == "上長B" %>
-                  <%= attendance.select :c_request, ['', '上長A', 'テスト1'], {} %>
-                <% else %>
-                  <%= attendance.select :c_request, ['', '上長A', '上長B', 'テスト1'], {} %>
-                <% end %>
-              </td>
-            </tr>
-          <% end %>
+              <% if att.c_approval == "承認" %>
+                <%= attendance.select :c_request, @array.map { |item| item }, {selected: ""} %>
+              <% else %>
+                <%= attendance.select :c_request, @array.map { |item| item }, {} %>
+              <% end %>
+            </td>
+          </tr>
         <% end %>
-      </tbody>
-      
-    </table>
-  </div>
+      <% end %>
+    </tbody>
+  </table>
 
-  <div class="center">
-    <%= link_to "↑", attendances_edit_one_month_user_path(date: @first_day), class: "btn btn-default" %>
-    <%= link_to "キャンセル", user_path(date: @first_day), class: "btn btn-md btn-default" %>
-    <%= f.submit "編集を保存する", class: "btn btn-md btn-primary" %>
-  </div>
+<div class="center">
+  <%= link_to "↑", attendances_edit_one_month_user_path(date: @first_day), class: "btn btn-default" %>
+  <%= link_to "キャンセル", user_path(date: @first_day), class: "btn btn-md btn-default" %>
+  <%= f.submit "編集を保存する", class: "btn btn-md btn-primary" %>
+</div>
 <% end %>

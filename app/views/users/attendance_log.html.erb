@@ -1,0 +1,52 @@
+<% provide(:title, @user.name) %>
+<h1>【 勤怠ログ 】</h1>
+
+<div class = "m5px">
+  <%= form_with(model: @attendances, url: attendance_log_user_path(date: @first_day), method: :get, local: true) do |f| %>
+    <%= f.month_field :worked_on, {} %>
+    <%= f.submit '検索', class:"btn btn-sm btn-primary" %>
+    <%= link_to "Reset", attendance_log_user_path(date: @first_day), class:"btn btn-sm btn-warning" %>
+  <% end %>
+</div>
+
+<table class="table table-bordered table-striped table-condensed table-hover" id="table-attendances">
+  <thead>
+    <tr>
+      <th>日付</th>
+      <th>変更前出社時間</th>
+      <th>変更前退社時間</th>
+      <th>変更後出社</th>
+      <th>変更後退社</th>
+      <th>指示者</th>
+      <th>承認日</th>
+    </tr>
+  </thead>
+  
+  <% if @attendances.present? %>
+    <% @attendances.each do |att| %>
+      <tbody>
+        <tr>
+        <% if att.c_approval == "承認" %>
+          <!--日付-->
+          <td><%= l(att.worked_on, format: :long2) %></td>
+          <!--変更前-->
+          <td><%= l(att.c_bf_started_at, format: :time) if att.c_bf_started_at.present? %></td>
+          <td><%= l(att.c_bf_finished_at, format: :time) if att.c_bf_finished_at.present? %></td>
+          <!--変更後-->
+          <td><%= l(att.c_af_started_at, format: :time) %></td>
+          <td><%= l(att.c_af_finished_at, format: :time) %></td>
+          <!--指示者-->
+          <td><%= att.c_request %></td>
+          <!--承認日-->
+          <td><%= l(att.c_approval_date, format: :long2) %></td>
+        <% end %>
+        </tr>
+      </tbody>
+    <% end %>
+  <% end %>
+</table>
+
+
+<div class="center">
+  <%= link_to "勤怠へ戻る", user_path(date: @first_day), class: "btn btn-md btn-default" %>
+</div>

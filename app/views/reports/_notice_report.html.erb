@@ -11,51 +11,52 @@
       <div class="row">
         <div class="col-md-10 position">
           
-          <%= form_with(model: @user, url: reports_update_report_user_path, local: true, method: :patch ) do |f| %>
-            <% @notice_user.each do |notice_user| %>
-              <h4 class="modal-title" style="text-align:center"><%="【#{notice_user.name}からの１ヶ月分勤怠申請】" %></h4>
-              <table class="table table-bordered table-striped table-position">
-                <thead>
+        <%= form_with(model: @user, url: reports_update_report_user_path, local: true, method: :patch ) do |f| %>
+          <% @notice_user.each do |notice_user| %>
+            <h4 class="modal-title" style="text-align:center"><%="【#{notice_user.name}からの１ヶ月分勤怠申請】" %></h4>
+            <table class="table table-bordered table-striped table-position table-hover">
+              <thead>
+                <tr>
+                  <th>月</th>
+                  <th>指示書確認者</th>
+                  <th>変更</th>
+                  <th>勤怠を確認する</th>
+                </tr>
+              </thead>
+              
+              <% @report_lists.where(user_id: notice_user.id).each do |report| %>
+                <%= f.fields_for "reports[]", report do |rep| %>
+                <tbody>
                   <tr>
-                    <th>月</th>
-                    <th>指示書確認者</th>
-                    <th>変更</th>
-                    <th>勤怠を確認する</th>
+                    <!-- 月 -->
+                    <td class="center"><%= report.r_month %></td>
+                    <!-- 指示書確認㊞ -->
+                    <td class="dropdown_menu">
+                      <%= rep.select :r_approval, ['', 'なし', '申請中', '承認', '否認'], {} %>
+                    </td>
+                    <!-- 変更 -->
+                    <td class="center"><%= rep.check_box :change, {:checked => false} %></td>
+                    <!-- 勤怠の確認 -->
+                    <td>
+                      <%= link_to "確認", user_path(notice_user.id, date: "2020-#{report.r_month}-01"), :target=>["_new"], class: "btn btn-sm btn-primary" %>
+                    </td>
                   </tr>
-                </thead>
-                
-                <% @report_lists.where(user_id: notice_user.id).each do |report| %>
-                  <%= f.fields_for "reports[]", report do |rep| %>
-                  <tbody>
-                    <tr>
-                      <!-- 月 -->
-                      <td class="center"><%= report.r_month %></td>
-                      <!-- 指示書確認㊞ -->
-                      <td class="dropdown_menu">
-                        <%= rep.select :r_approval, ['', 'なし', '申請中', '承認', '否認'], {} %>
-                      </td>
-                      <!-- 変更 -->
-                      <td class="center"><%= rep.check_box :change, {:checked => false} %></td>
-                      <!-- 勤怠の確認 -->
-                      <td>
-                        <%= link_to "確認", user_path(notice_user.id), :target=>["_new"], class: "btn btn-sm btn-primary" %>
-                      </td>
-                    </tr>
-                  </tbody>
-                  <% end %>
+                </tbody>
                 <% end %>
-                  
-              </table>
-            <% end %>
-            
-              <div class="center">
-                <%= link_to "キャンセル", user_url(@user), class: "btn btn-md btn-default" %>
-                <%= f.submit "変更を送信する", class: "btn btn-md btn-primary" %>
-              </div>
-            <% end %>
+              <% end %>
+                
+            </table>
+          <% end %>
+          
+          <!--ボタン-->
+          <div class="center">
+            <%= link_to "キャンセル", user_url(@user), class: "btn btn-md btn-default" %>
+            <%= f.submit "変更を送信する", class: "btn btn-md btn-primary" %>
           </div>
+        <% end %>
         </div>
       </div>
+    </div>
     </div>
   </div>
 </div>

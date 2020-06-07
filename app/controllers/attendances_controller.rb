@@ -1,8 +1,8 @@
 class AttendancesController < ApplicationController
-  before_action :set_user, only: [:edit_one_month, :update_one_month, :req_overtime, :update_overtime, :notice_overtime, :update_notice_overtime, :notice_change_at, :update_notice_change_at]
+  before_action :set_user, only: [:edit_one_month, :update_one_month, :req_overtime, :update_overtime, :notice_overtime, :update_notice_overtime, :notice_change_at, :update_notice_change_at, :attendance_log]
   before_action :logged_in_user, only: [:update, :edit_one_month]
   before_action :admin_or_correct_user, only: [:update, :edit_one_month, :update_one_month]
-  before_action :set_one_month, only: [:edit_one_month]
+  before_action :set_one_month, only: [:edit_one_month, :attendance_log]
 
   UPDATE_ERROR_MSG = "勤怠登録に失敗しました。やり直してください。"
   NOTICE_ERROR_MSG = "入力が足りません。申請をやり直してください。"
@@ -15,7 +15,7 @@ class AttendancesController < ApplicationController
     if @attendance.started_at.nil?
       unless @attendance.c_approval == "申請中"
         if @attendance.update_attributes(started_at: Time.current.change(sec: 0),
-                                        c_started_at: Time.current.change(sec: 0))
+                                        c_af_started_at: Time.current.change(sec: 0))
           flash[:info] = "おはようございます！"
         else
           flash[:danger] = UPDATE_ERROR_MSG + @attendance.errors.full_messages.join
@@ -30,7 +30,7 @@ class AttendancesController < ApplicationController
     elsif @attendance.finished_at.nil?
       unless @attendance.c_approval == "申請中"
         if @attendance.update_attributes(finished_at: Time.current.change(sec: 0),
-                                        c_finished_at: Time.current.change(sec: 0))
+                                        c_af_finished_at: Time.current.change(sec: 0))
           flash[:info] = "お疲れ様でした。"
         else
           flash[:danger] = UPDATE_ERROR_MSG
@@ -57,12 +57,19 @@ class AttendancesController < ApplicationController
       attendances_params.each do |id, item|
         @attendance = Attendance.find(id)
         @attendance.attributes = item
+        
         # 現在日以前のみ確認
         if @attendance.worked_on <= Date.current
+          
           # 申請先が選択済み、既に申請中でないもの
           if @attendance.c_request.present? && @attendance.c_approval != "申請中"
-            @attendance.c_started_at = make_time(@attendance, "start")
-            @attendance.c_finished_at = make_time(@attendance, "finish")
+            @attendance.c_af_started_at = make_time(@attendance, "start")
+            @attendance.c_af_finished_at = make_time(@attendance, "finish")
+            
+            # 変更前の履歴を保存する
+            @attendance.c_bf_started_at = @attendance.started_at if @attendance.started_at.present?
+            @attendance.c_bf_finished_at = @attendance.finished_at if @attendance.finished_at.present?
+            
             @attendance.c_approval = "申請中"
             if @attendance.save!(context: :attendance_update)
               @count += 1
@@ -99,11 +106,13 @@ class AttendancesController < ApplicationController
         attendance.attributes = item
         if attendance.change && attendance.c_approval != "申請中"
           if attendance.c_approval == "承認"
-            # 変更前が存在する場合は置き換える
-            attendance.started_at = attendance.c_started_at
-            attendance.finished_at = attendance.c_finished_at
+            
+            # メインの勤怠一覧用の時間も置き換える
+            attendance.started_at = attendance.c_af_started_at
+            attendance.finished_at = attendance.c_af_finished_at
+            
             attendance.o_nextday = true if attendance.c_nextday
-            attendance.c_request = nil
+            attendance.c_approval_date = Time.now
             if attendance.save!
               @count[0] += 1
             end
@@ -111,8 +120,8 @@ class AttendancesController < ApplicationController
             attendance.note = nil
             attendance.c_nextday = false
             # 変更前が存在する場合は置き換える
-            attendance.c_started_at = attendance.started_at
-            attendance.c_finished_at = attendance.finished_at
+            attendance.c_af_started_at = attendance.started_at
+            attendance.c_af_finished_at = attendance.finished_at
             attendance.c_request = nil
             attendance.change = false
             if attendance.save!
@@ -196,7 +205,7 @@ class AttendancesController < ApplicationController
         if attendance.change && attendance.o_approval != "申請中"
           if attendance.o_approval == "承認"
             attendance.finished_at = attendance.end_time
-            attendance.c_finished_at = attendance.end_time
+            attendance.c_af_finished_at = attendance.end_time
             attendance.c_nextday = true if attendance.o_nextday
             if attendance.save!
               @count[0] += 1
@@ -230,7 +239,7 @@ class AttendancesController < ApplicationController
 
     # 勤怠変更申請内容を扱います。
     def attendances_params
-      params.require(:user).permit(attendances: [:c_started_at, :c_finished_at, :c_nextday, :c_request, :note])[:attendances]
+      params.require(:user).permit(attendances: [:c_af_started_at, :c_af_finished_at, :c_nextday, :c_request, :note])[:attendances]
     end
     
     # 通知のあった勤怠変更申請の承認内容を扱います。
@@ -286,9 +295,9 @@ class AttendancesController < ApplicationController
       return total
     end
     
-    # 日付が未設定なため日付の設定
+    # 時間のみで、日付が未設定なため日付を付加する
     def make_time(at, hours)
-      hours = hours == "start" ? at.c_started_at : at.c_finished_at
+      hours = hours == "start" ? at.c_af_started_at : at.c_af_finished_at
       
       @datetime = DateTime.new(at.worked_on.year,
                               at.worked_on.month,

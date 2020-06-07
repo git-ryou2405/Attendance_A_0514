@@ -1,5 +1,6 @@
 class ReportsController < ApplicationController
   before_action :set_user, only: [:notice_report, :update_report]
+  before_action :set_one_month, only: :notice_report
   
   NOTICE_ERROR_MSG = "入力が足りません。申請をやり直してください。"
   

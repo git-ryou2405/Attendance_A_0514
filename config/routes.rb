@@ -17,6 +17,7 @@ Rails.application.routes.draw do
         get 'edit_basic_info_admin'
         get 'working_list'
         patch 'update_basic_info'
+        get 'attendance_log'
         get 'attendances/edit_one_month'
         patch 'attendances/update_one_month'
         
@@ -28,7 +29,6 @@ Rails.application.routes.draw do
         patch 'attendances/update_notice_change_at'
         get 'reports/notice_report'
         patch 'reports/update_report'
-        
       end
       collection {post :import}
       resources :attendances, only: :update

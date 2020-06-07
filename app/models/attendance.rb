@@ -33,20 +33,20 @@ class Attendance < ApplicationRecord
   validate :total_working_over24h, on: :attendance_update
     
   def need_item
-    errors.add(:started_at, "の入力が不足しています") if c_finished_at.blank?
-    errors.add(:finished_at, "の入力が不足しています") if c_started_at.blank?
+    errors.add(:started_at, "の入力が不足しています") if c_af_finished_at.blank?
+    errors.add(:finished_at, "の入力が不足しています") if c_af_started_at.blank?
     errors.add(:note, "の入力が不足しています") if note.blank?
   end
   
   def started_at_than_finished_at_fast_if_invalid
-    if c_started_at.present? && c_finished_at.present? && c_nextday == false
-      errors.add(:started_at, "より早い退勤時間は無効です") if c_started_at > c_finished_at
+    if c_af_started_at.present? && c_af_finished_at.present? && c_nextday == false
+      errors.add(:started_at, "より早い退勤時間は無効です") if c_af_started_at > c_af_finished_at
     end
   end
   
   def total_working_over24h
-    if c_started_at.present? && c_finished_at.present? && c_nextday == true
-      @total = ((c_finished_at.since(1.days) - c_started_at) / 3600)
+    if c_af_started_at.present? && c_af_finished_at.present? && c_nextday == true
+      @total = ((c_af_finished_at.since(1.days) - c_af_started_at) / 3600)
       errors.add(:company_time, "が24時間をオーバーしてしまいます") unless @total < 24
     end
   end

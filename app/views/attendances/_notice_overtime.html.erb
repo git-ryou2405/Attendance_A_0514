@@ -14,7 +14,7 @@
           <%= form_with(model: @user, url: attendances_update_notice_overtime_user_path, local: true, method: :patch) do |f| %>
             <% @notice_user.each do |notice_user| %>
               <h4 class="modal-title" style="text-align:center"><%= "【#{notice_user.name}からの残業申請】" %></h4>
-              <table class="table table-bordered table-striped table-position">
+              <table class="table table-bordered table-striped table-position table-hover">
                 <thead>
                   <tr>
                     <th><%= Attendance.human_attribute_name :worked_on %></th>
@@ -53,7 +53,7 @@
                       <td class="center"><%= at.check_box :change, {:checked => false} %></td>
                       <!-- 勤怠の確認 -->
                       <td>
-                        <%= link_to "確認", user_path(notice_user.id), :target=>["_new"], class: "btn btn-sm btn-primary" %>
+                        <%= link_to "確認", user_path(notice_user.id, date: "2020-#{ats.worked_on.month}-01"), :target=>["_new"], class: "btn btn-sm btn-primary" %>
                       </td>
                     </tr>
                   </tbody>
@@ -63,6 +63,7 @@
               </table>
             <% end %>
               
+          <!--ボタン-->
           <div class="center">
             <%= link_to "キャンセル", user_url(@user), class: "btn btn-md btn-default" %>
             <%= f.submit "変更を送信する", class: "btn btn-md btn-primary" %>
@@ -70,6 +71,7 @@
           <% end %>
         </div> 
       </div>
+    </div>
     </div>
   </div>
 </div>

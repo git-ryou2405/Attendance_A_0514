@@ -22,8 +22,11 @@ ActiveRecord::Schema.define(version: 20200602072723) do
     t.datetime "updated_at", null: false
     t.string "c_approval"
     t.string "c_request"
-    t.datetime "c_started_at"
-    t.datetime "c_finished_at"
+    t.date "c_approval_date"
+    t.datetime "c_bf_started_at"
+    t.datetime "c_bf_finished_at"
+    t.datetime "c_af_started_at"
+    t.datetime "c_af_finished_at"
     t.boolean "c_nextday", default: false
     t.string "o_approval"
     t.string "o_request"
@@ -63,13 +66,13 @@ ActiveRecord::Schema.define(version: 20200602072723) do
     t.string "remember_digest"
     t.boolean "admin", default: false
     t.string "affiliation"
-    t.datetime "basic_work_time", default: "2020-06-03 23:00:00"
-    t.datetime "designated_work_start_time", default: "2020-06-04 00:00:00"
-    t.datetime "designated_work_end_time", default: "2020-06-04 08:30:00"
+    t.datetime "basic_work_time", default: "2020-06-07 23:00:00"
+    t.datetime "designated_work_start_time", default: "2020-06-08 00:00:00"
+    t.datetime "designated_work_end_time", default: "2020-06-08 08:30:00"
     t.integer "employee_number"
     t.string "uid"
     t.boolean "superior", default: false
-    t.datetime "work_time", default: "2020-06-03 22:30:00"
+    t.datetime "work_time", default: "2020-06-07 22:30:00"
     t.index ["email"], name: "index_users_on_email", unique: true
   end
 
