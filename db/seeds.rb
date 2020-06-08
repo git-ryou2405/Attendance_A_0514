@@ -1,6 +1,6 @@
 # coding: utf-8
 
-@password = "111111"
+@password = "password"
 
 @testuser = User.create!(name: "Sample User",
              email: "sample@email.com",
