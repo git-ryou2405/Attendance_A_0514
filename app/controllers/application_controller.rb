@@ -3,7 +3,7 @@ class ApplicationController < ActionController::Base
   include SessionsHelper
   
   $days_of_the_week = %w{日 月 火 水 木 金 土}
-
+  
   # beforeフィルター
 
   # paramsハッシュからユーザーを取得します。
@@ -33,44 +33,24 @@ class ApplicationController < ActionController::Base
   # システム管理権限所有かどうか判定します。
   def admin_user
     unless current_user.admin?
-      flash[:danger] = "権限がありません。(1)"
+      flash[:danger] = "権限がありません。"
       redirect_to root_url
-    end
-  end
-  
-  # システム管理権限所有かどうか判定します。
-  def show_admin_check
-    @admin_check = User.find(params[:id])
-    if @admin_check.admin?
-      unless current_user.admin?
-        flash[:danger] = "権限がありません。(2)"
-        redirect_to root_url
-      end
     end
   end
 
   # アクセスしたユーザーが
-  # 現在ログインしているユーザーまたはシステム管理者権限所有か確認します。
+  # 現在ログインしているユーザーまたは上長ユーザーか確認します。
   def correct_user_or_admin
-    unless current_user?(@user) || current_user.admin? || current_user.superior?
-      flash[:danger] = "権限がありません。(3)"
+    
+    if params[:id] == "1"
+      redirect_to root_url
+      return
+    end
+    
+    unless current_user?(@user) || current_user.superior?
+      flash[:danger] = "権限がありません。core!!"
       redirect_to root_url
     end
-  end
-  
-  # 所属長承認申請のために12ヶ月分のデータの存在を確認・セットします。
-  def set_year_date
-    @requests = @user.requests.where(r_month: 1..12)
-    unless 12 == @requests.count
-      ActiveRecord::Base.transaction do # トランザクションを開始します。
-        # 繰り返し処理により、12ヶ月分の勤怠承認申請データを生成します。
-        12.times { |n| @user.requests.create!(r_month: n+1) }
-      end
-      @requests = @user.requests.where(r_month: 1..12).order(:r_month)
-    end
-  rescue ActiveRecord::RecordInvalid # トランザクションによるエラーの分岐です。
-    flash[:danger] = "ページ情報の取得に失敗しました、再アクセスしてください。"
-    redirect_to root_url
   end
 
   # ページ出力前に1ヶ月分のデー���の存在を確認・セットします。

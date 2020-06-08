@@ -15,7 +15,7 @@ CSV.generate do |csv|
     end
     
     column_values = [
-      attendance.worked_on.strftime("%Y/%m/%d"),
+      attendance.worked_on.strftime("%m/%d"),
       @started_at,
       @finished_at
     ]

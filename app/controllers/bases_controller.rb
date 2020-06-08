@@ -1,6 +1,9 @@
 class BasesController < ApplicationController
   before_action :set_base, only: [:edit, :update, :destroy]
   
+  # 管理者かどうか
+  before_action :admin_user, only: [:index, :edit, :update, :destroy]
+  
   def new
   end
   
@@ -40,12 +43,12 @@ class BasesController < ApplicationController
     redirect_to bases_path
   end
   
-  def set_base
-    @base = Base.find(params[:id])
-  end
-  
   private
-
+  
+    def set_base
+      @base = Base.find(params[:id])
+    end
+  
     def base_params
       params.require(:base).permit(:base_no, :base_name, :attendance_type)
     end

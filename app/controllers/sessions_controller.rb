@@ -13,10 +13,16 @@ class SessionsController < ApplicationController
       # ログイン情報記憶するor記憶しない
       params[:session][:remember_me] == '1' ? remember(user) : forget(user)
       
-      redirect_to current_user
+      # 管理者ならユーザー一覧画面へ遷移
+      if current_user.admin?
+        redirect_to users_url
+      else
+        redirect_to current_user
+      end
       
       # ユーザー情報ページにリダイレクト
       # redirect_back_or user
+      
     else
       flash.now[:danger] = "認証に失敗しました。"
       render :new

@@ -1,11 +1,15 @@
 class UsersController < ApplicationController
   before_action :set_user, only: [:show, :edit, :update, :destroy, :edit_basic_info, :update_basic_info, :edit_basic_info_admin, :working_list, :attendance_log, :csv_export]
-  before_action :logged_in_user, only: [:index, :edit, :update, :destroy, :edit_basic_info, :update_basic_info, :edit_basic_info_admin, :working_list]
-  before_action :correct_user, only: [:edit, :update]
-  before_action :admin_user, only: [:index, :destroy, :edit_basic_info, :update_basic_info, :edit_basic_info_admin, :working_list]
-  before_action :set_one_month, only: [:show, :attendance_log, :csv_export]
+  # アクセス先のログインユーザーor上長（管理者も不可）
   before_action :correct_user_or_admin, only: :show
-  before_action :show_admin_check, only: :show
+  # ログイン中かどうか
+  before_action :logged_in_user, only: [:edit, :index, :edit, :update, :destroy, :edit_basic_info, :update_basic_info, :edit_basic_info_admin, :attendance_log, :working_list]
+  # アクセス先のログインユーザーかどうか
+  before_action :correct_user, only: [:edit, :update, :attendance_log]
+  # 管理者かどうか
+  before_action :admin_user, only: [:index, :destroy, :edit_basic_info, :update_basic_info, :edit_basic_info_admin, :working_list]
+  # １ヶ月分の勤怠情報を取得
+  before_action :set_one_month, only: [:show, :attendance_log, :csv_export]
 
   def index
     @users = query.paginate(page: params[:page], per_page: 20)
@@ -28,7 +32,7 @@ class UsersController < ApplicationController
       format.csv do
           #csv用の処理を書く
           send_data render_to_string,
-          filename: "#{@user.name}_#{@first_day.strftime("%Y-%m")}.csv", type: :csv
+          filename: "【勤怠】#{@user.name}_#{@first_day.strftime("%Y-%m")}.csv", type: :csv
       end
     end
   end
