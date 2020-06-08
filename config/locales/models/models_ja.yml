@@ -25,7 +25,8 @@ ja:
           end_time: 終了予定時刻
           overtime: 時間外残業
           business_process: 業務処理内容
-          c_nextday: 翌日
+          c_bf_nextday: 翌日
+          c_af_nextday: 翌日
           o_nextday: 翌日
           c_approval: 指示者確認㊞
           o_approval: 指示者確認㊞

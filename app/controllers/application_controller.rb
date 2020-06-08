@@ -61,7 +61,6 @@ class ApplicationController < ActionController::Base
   # 所属長承認申請のために12ヶ月分のデータの存在を確認・セットします。
   def set_year_date
     @requests = @user.requests.where(r_month: 1..12)
-    debugger
     unless 12 == @requests.count
       ActiveRecord::Base.transaction do # トランザクションを開始します。
         # 繰り返し処理により、12ヶ月分の勤怠承認申請データを生成します。

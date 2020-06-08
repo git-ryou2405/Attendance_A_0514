@@ -9,7 +9,8 @@ class AddBasicInfoToAttendance < ActiveRecord::Migration[5.1]
     add_column :attendances, :c_bf_finished_at, :datetime
     add_column :attendances, :c_af_started_at, :datetime
     add_column :attendances, :c_af_finished_at, :datetime
-    add_column :attendances, :c_nextday, :boolean, default: false
+    add_column :attendances, :c_bf_nextday, :boolean, default: false
+    add_column :attendances, :c_af_nextday, :boolean, default: false
     
     # 残業申請
     add_column :attendances, :o_approval, :string

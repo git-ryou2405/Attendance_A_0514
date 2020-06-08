@@ -27,7 +27,8 @@ ActiveRecord::Schema.define(version: 20200602072723) do
     t.datetime "c_bf_finished_at"
     t.datetime "c_af_started_at"
     t.datetime "c_af_finished_at"
-    t.boolean "c_nextday", default: false
+    t.boolean "c_bf_nextday", default: false
+    t.boolean "c_af_nextday", default: false
     t.string "o_approval"
     t.string "o_request"
     t.boolean "o_nextday", default: false
@@ -66,7 +67,7 @@ ActiveRecord::Schema.define(version: 20200602072723) do
     t.string "remember_digest"
     t.boolean "admin", default: false
     t.string "affiliation"
-    t.datetime "basic_work_time", default: "2020-06-07 23:00:00"
+    t.datetime "basic_work_time", default: "2020-06-07 22:30:00"
     t.datetime "designated_work_start_time", default: "2020-06-08 00:00:00"
     t.datetime "designated_work_end_time", default: "2020-06-08 08:30:00"
     t.integer "employee_number"

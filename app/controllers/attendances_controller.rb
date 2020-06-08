@@ -2,7 +2,7 @@ class AttendancesController < ApplicationController
   before_action :set_user, only: [:edit_one_month, :update_one_month, :req_overtime, :update_overtime, :notice_overtime, :update_notice_overtime, :notice_change_at, :update_notice_change_at, :attendance_log]
   before_action :logged_in_user, only: [:update, :edit_one_month]
   before_action :admin_or_correct_user, only: [:update, :edit_one_month, :update_one_month]
-  before_action :set_one_month, only: [:edit_one_month, :attendance_log]
+  before_action :set_one_month, only: [:edit_one_month, :req_overtime, :update_overtime]
 
   UPDATE_ERROR_MSG = "勤怠登録に失敗しました。やり直してください。"
   NOTICE_ERROR_MSG = "入力が足りません。申請をやり直してください。"
@@ -78,7 +78,6 @@ class AttendancesController < ApplicationController
         end
       end
     end
-    
     if @count > 0
       flash[:success] = "勤怠情報の編集申請を#{@count}件送信しました。"
       redirect_to user_url(date: params[:date])
@@ -110,15 +109,16 @@ class AttendancesController < ApplicationController
             # メインの勤怠一覧用の時間も置き換える
             attendance.started_at = attendance.c_af_started_at
             attendance.finished_at = attendance.c_af_finished_at
+            attendance.c_bf_nextday = attendance.c_af_nextday
             
-            attendance.o_nextday = true if attendance.c_nextday
+            attendance.o_nextday = true if attendance.c_bf_nextday
             attendance.c_approval_date = Time.now
             if attendance.save!
               @count[0] += 1
             end
           else
             attendance.note = nil
-            attendance.c_nextday = false
+            attendance.c_bf_nextday = false
             # 変更前が存在する場合は置き換える
             attendance.c_af_started_at = attendance.started_at
             attendance.c_af_finished_at = attendance.finished_at
@@ -183,10 +183,10 @@ class AttendancesController < ApplicationController
     else
       flash[:danger] = "在社時間が24時間をオーバーしてしまいます。"
     end
-    redirect_to user_url(@user)
+    redirect_to user_url(date: @first_day)
   rescue ActiveRecord::RecordInvalid # トランザクションによるエラーの分岐です。
     flash[:danger] = @attendance.errors.full_messages.join
-    redirect_to user_url(@user)
+    redirect_to user_url(date: @first_day)
   end
   
   # 残業申請のお知らせフォーム
@@ -206,7 +206,7 @@ class AttendancesController < ApplicationController
           if attendance.o_approval == "承認"
             attendance.finished_at = attendance.end_time
             attendance.c_af_finished_at = attendance.end_time
-            attendance.c_nextday = true if attendance.o_nextday
+            attendance.c_bf_nextday = true if attendance.o_nextday
             if attendance.save!
               @count[0] += 1
             end
@@ -239,7 +239,7 @@ class AttendancesController < ApplicationController
 
     # 勤怠変更申請内容を扱います。
     def attendances_params
-      params.require(:user).permit(attendances: [:c_af_started_at, :c_af_finished_at, :c_nextday, :c_request, :note])[:attendances]
+      params.require(:user).permit(attendances: [:c_af_started_at, :c_af_finished_at, :c_af_nextday, :c_request, :note])[:attendances]
     end
     
     # 通知のあった勤怠変更申請の承認内容を扱います。

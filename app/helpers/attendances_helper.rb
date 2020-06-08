@@ -19,7 +19,7 @@ module AttendancesHelper
   def working_times_check_nextday(attendance)
     start = attendance.started_at.floor_to(15.minutes) 
     
-    if attendance.c_nextday
+    if attendance.c_bf_nextday
       finish = attendance.finished_at.since(1.days).floor_to(15.minutes)
       format("%.2f", (((finish - start) / 60) / 60.0))
     else

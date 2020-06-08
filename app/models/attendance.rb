@@ -39,13 +39,13 @@ class Attendance < ApplicationRecord
   end
   
   def started_at_than_finished_at_fast_if_invalid
-    if c_af_started_at.present? && c_af_finished_at.present? && c_nextday == false
+    if c_af_started_at.present? && c_af_finished_at.present? && c_af_nextday == false
       errors.add(:started_at, "より早い退勤時間は無効です") if c_af_started_at > c_af_finished_at
     end
   end
   
   def total_working_over24h
-    if c_af_started_at.present? && c_af_finished_at.present? && c_nextday == true
+    if c_af_started_at.present? && c_af_finished_at.present? && c_bf_nextday == true
       @total = ((c_af_finished_at.since(1.days) - c_af_started_at) / 3600)
       errors.add(:company_time, "が24時間をオーバーしてしまいます") unless @total < 24
     end

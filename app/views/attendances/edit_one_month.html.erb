@@ -34,7 +34,7 @@
               <td><%= attendance.time_field :c_af_finished_at, readonly: true, class: "form-control" %></td>
             <% end %>
             <!-- 翌日 -->
-            <td><%= attendance.check_box :c_nextday, {} %></td>
+            <td><%= attendance.check_box :c_af_nextday, {} %></td>
             
             <!-- 在社時間 -->
             <td>
@@ -69,7 +69,7 @@
 
 <div class="center">
   <%= link_to "↑", attendances_edit_one_month_user_path(date: @first_day), class: "btn btn-default" %>
-  <%= link_to "キャンセル", user_path(date: @first_day), class: "btn btn-md btn-default" %>
+  <%= link_to "勤怠へ戻る", user_path(date: @first_day), class: "btn btn-md btn-default" %>
   <%= f.submit "編集を保存する", class: "btn btn-md btn-primary" %>
 </div>
 <% end %>
