@@ -8,10 +8,10 @@ CSV.generate do |csv|
     @started_at = ""
     @finished_at = ""
     unless attendance.started_at.nil?
-      @started_at = attendance.started_at.strftime("%H:%M")
+      @started_at = attendance.started_at.floor_to(15.minutes).strftime("%H:%M")
     end
     unless attendance.finished_at.nil?
-      @finished_at = attendance.finished_at.strftime("%H:%M")
+      @finished_at = attendance.finished_at.floor_to(15.minutes).strftime("%H:%M")
     end
     
     column_values = [
