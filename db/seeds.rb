@@ -2,6 +2,7 @@
 
 @password = "password"
 
+
 @testuser = User.create!(name: "Sample User",
              email: "sample@email.com",
              employee_number: 1,
