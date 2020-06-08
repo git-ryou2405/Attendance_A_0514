@@ -18,6 +18,7 @@ Rails.application.routes.draw do
         get 'working_list'
         patch 'update_basic_info'
         get 'attendance_log'
+        get 'csv_export'
         get 'attendances/edit_one_month'
         patch 'attendances/update_one_month'
         
