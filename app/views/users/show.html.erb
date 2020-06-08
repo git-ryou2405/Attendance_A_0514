@@ -156,10 +156,12 @@
         <!-- 備考 -->
         <td><%= oneday.note %></td>
         
-        <!-- 終了予定時間：時、分、 時間外残業 -->
         <% if oneday.end_time.present? && !oneday.o_request.nil? %>
+        <!-- 終了予定時間：時、分 -->
           <td><%= oneday.end_time.hour %></td>
           <td><%= oneday.end_time.min %></td>
+          
+        <!--時間外残業-->
           <td>
             <% if oneday.overtime < 0 %>
               <%= "0 h" %>

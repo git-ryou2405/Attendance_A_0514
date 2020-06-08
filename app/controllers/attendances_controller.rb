@@ -270,7 +270,7 @@ class AttendancesController < ApplicationController
                               at.end_time.day,
                               @user.designated_work_end_time.hour,
                               @user.designated_work_end_time.min,
-                              0).in_time_zone("Asia/Tokyo") - 9.hour).floor_to(15.minutes)
+                              0).in_time_zone("Asia/Tokyo")).floor_to(15.minutes)
                               
       # 比較計算用 指定勤務開始時間の作成
       @work_start_time = (Time.local(at.end_time.year,
@@ -278,18 +278,24 @@ class AttendancesController < ApplicationController
                               at.end_time.day,
                               @user.designated_work_start_time.hour,
                               @user.designated_work_start_time.min,
-                              0).in_time_zone("Asia/Tokyo") - 9.hour).floor_to(15.minutes)
+                              0).in_time_zone("Asia/Tokyo")).floor_to(15.minutes)
       
       # 指定勤務開始時間より早く出社してた場合
       @over = 0
       if @work_start_time > at.started_at
-        @start = at.started_at.floor_to(15.minutes) 
+        @start = at.started_at.floor_to(15.minutes)
         @over = (@work_start_time - @start)
+      end
+      
+      # 指定勤務終了時間より遅く出社してた場合
+      if at.started_at > @work_end_time
+        @start = at.started_at.floor_to(15.minutes)
+        @over = (@work_end_time - @start)
       end
       
       # 残業時間 & 在社時間の計算（翌日チェック判定）
       if at.o_nextday.present?
-        @end = at.end_time.since(1.days).floor_to(15.minutes) 
+        @end = at.end_time.since(1.days).floor_to(15.minutes)
         at.overtime = (((@end - @work_end_time) + @over) / 3600)
         t1 = ((at.end_time.since(1.days) - at.started_at) / 3600)
       else

@@ -12,7 +12,6 @@
         <div class="col-md-10 col-md-offset-1">
           
           <%= form_with(model: @user, url: attendances_update_overtime_user_path(date: @first_day), local: true, method: :patch) do |f| %>
-          <% logger.debug("このページは #{@first_day} です") %>
             <h4 class="modal-title" style="text-align:center">【残業申請】</h4>
             <table class="table table-bordered table-striped table-position table-hover">
               <thead>
