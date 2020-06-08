@@ -265,14 +265,15 @@ class AttendancesController < ApplicationController
                               at.end_time.day,
                               @user.designated_work_end_time.hour,
                               @user.designated_work_end_time.min,
-                              0).in_time_zone("Asia/Tokyo") - 9.hour).floor_to(15.minutes) 
-      
+                              0).in_time_zone("Asia/Tokyo") - 9.hour).floor_to(15.minutes)
+                              
+      # 比較計算用 指定勤務開始時間の作成
       @work_start_time = (Time.local(at.end_time.year,
                               at.end_time.month,
                               at.end_time.day,
                               @user.designated_work_start_time.hour,
                               @user.designated_work_start_time.min,
-                              0).in_time_zone("Asia/Tokyo") - 9.hour).floor_to(15.minutes) 
+                              0).in_time_zone("Asia/Tokyo") - 9.hour).floor_to(15.minutes)
       
       # 指定勤務開始時間より早く出社してた場合
       @over = 0
