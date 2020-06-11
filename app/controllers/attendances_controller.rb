@@ -127,6 +127,7 @@ class AttendancesController < ApplicationController
             # 変更前が存在する場合は置き換える
             attendance.c_af_started_at = attendance.started_at
             attendance.c_af_finished_at = attendance.finished_at
+            attendance.c_af_nextday = false
             attendance.c_request = nil
             attendance.change = false
             if attendance.save!
